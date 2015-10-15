@@ -1,15 +1,15 @@
 {
-  "name": "event-hub-service",
+  "name": "course-service",
   "version": "0.0.1",
-  "description": "Event Hub service which handles dispatching all the events to different services which subscribe to the event hub",
+  "description": "A micro service which handles all the CRUD operations on the Course Resource",
   "scripts": {
     "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "private": true,
-  "author": "Sai Karthik Reddy Ginni <sg3205@columbia.edu>",
+  "author": "Rama Kompella <rk2797@columbia.edu>",
   "contributors": [
-    "Rama Kompella <rk2797@columbia.edu>",
+    "Sai Karthik Reddy Ginni <sg3205@columbia.edu>",
     "Sahana Subbanna <ss4737@columbia.edu>",
     "Sanjana Gopisetty <ssg2147@columbia.edu>",
     "Meril Dsouza <msd2178@columbia.edu>"

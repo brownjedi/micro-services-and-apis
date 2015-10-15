@@ -5,9 +5,10 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const databaseConfig = require('./config/database');
 
 // Set the MongoDB connection
-mongoose.connect('mongodb://localhost');
+mongoose.connect(process.env.mongoDBURL || databaseConfig.url);
 
 let app = express();
 
@@ -37,6 +38,6 @@ app.use((err, req, res, next) => {
 
 // Start the server and listen to the port specified
 app.listen(app.get('port'), () => {
-    console.log(`EventHub Express Server started on port: ${app.get('port')}`);
+    console.log(`Handler Express Server started on port: ${app.get('port')}`);
 });
 

@@ -1,16 +1,16 @@
 {
-  "name": "event-hub-service",
+  "name": "gateway-service",
   "version": "0.0.1",
-  "description": "Event Hub service which handles dispatching all the events to different services which subscribe to the event hub",
+  "description": "API Gateway micro service which routes the public (exposed) urls to private urls",
   "scripts": {
     "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "private": true,
-  "author": "Sai Karthik Reddy Ginni <sg3205@columbia.edu>",
+  "author": "Sahana Subbanna <ss4737@columbia.edu>",
   "contributors": [
     "Rama Kompella <rk2797@columbia.edu>",
-    "Sahana Subbanna <ss4737@columbia.edu>",
+    "Sai Karthik Reddy Ginni <sg3205@columbia.edu>",
     "Sanjana Gopisetty <ssg2147@columbia.edu>",
     "Meril Dsouza <msd2178@columbia.edu>"
   ],
