@@ -1,0 +1,12 @@
+{
+  "name": "event-hub-service",
+  "version": "0.0.1",
+  "description": "Event Hub service which handles dispatching all the events to different services which subscribe to the event hub",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sai Karthik Reddy Ginni <sg3205@columbia.edu>",
+  "license": "MIT"
+}
