@@ -8,5 +8,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sai Karthik Reddy Ginni <sg3205@columbia.edu>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "async": "^1.4.2",
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3",
+    "mongoose": "^4.1.11",
+    "morgan": "^1.6.1",
+    "superagent": "^1.4.0"
+  }
 }
