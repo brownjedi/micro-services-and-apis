@@ -19,8 +19,10 @@
     "async": "^1.4.2",
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
-    "mongoose": "^4.1.11",
+    "mongoose": "^4.0.8",
+    "mongoose-auto-increment": "^4.0.0",
     "morgan": "^1.6.1",
+    "npm": "^3.3.8",
     "superagent": "^1.4.0"
   }
 }

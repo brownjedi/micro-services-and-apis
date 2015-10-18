@@ -1,28 +1,41 @@
-'use strict';
+"use strict";
 
 // Module dependencies
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const databaseConfig = require('./config/database');
+const autoIncrement = require('mongoose-auto-increment');
+const database = require('./config/database');
+const urlMappingRoutes = require('./routes/urlMappingRoutes');
+const urlMapping = require('./models/urlMapping');
 
 // Set the MongoDB connection
-mongoose.connect(process.env.mongoDBURL || databaseConfig.url);
+let connection = mongoose.connect(process.env.mongoDBURL || database.url);
+
+autoIncrement.initialize(connection);
+urlMapping.urlMappingSchema.plugin(autoIncrement.plugin, {
+    model: urlMapping.urlMappingCollection,
+    field: 'mapping_id',
+    startAt: 1,
+    incrementBy: 1
+});
 
 let app = express();
 
 app.set('port', process.env.PORT || 3000);
+
 
 // Setting up the middleware services
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
+console.log("Before rerouting");
 // setting all the routes
+app.use('/spi/v1/routes', urlMappingRoutes);
 
-
-
+console.log("After rerouting");
 // catch 404 and forward it to error handler
 app.use((req, res, next) => {
     let err = new Error('404: Not Found');
