@@ -6,9 +6,10 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const databaseConfig = require('./config/database');
-
+const studentRoutes = require('./routes/studentRoutes');
 // Set the MongoDB connection
 mongoose.connect(process.env.mongoDBURL || databaseConfig.url);
+mongoose.set('debug', true);
 
 let app = express();
 
@@ -20,7 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 // setting all the routes
-
+app.use('/api/v1/students',studentRoutes);
 
 
 // catch 404 and forward it to error handler
