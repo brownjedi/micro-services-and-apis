@@ -17,7 +17,7 @@ router.post('/', (req, res) => {
     // Check if the user sent the events array in the body.
     // If he sent the events, validate if its an array
     if(req.body.events && req.body.events.constructor !== Array) {
-    	return res.status(400).json(dataTransformer.transformError(400, "Bad Request, The required parameter 'event' is not an Array. The POST method must have the data(JSON) in the Request body"));
+    	return res.status(400).json(dataTransformer.transformError(400, "Bad Request, The parameter 'event' is not an Array. The POST method must have the data(JSON) in the Request body"));
     }
 
 	Subscription.findOne({callback: req.body.callback}, (err, data) => {
@@ -29,6 +29,7 @@ router.post('/', (req, res) => {
 			return res.status(409).json(dataTransformer.transformError(409, "A resource with the specified callback already exists. To update this resource do a PUT instead of POST."));
 		} else {
 			let subscription = new Subscription({
+				subscriptionID: req.body.subscriptionID,
 				callback: req.body.callback,
 				events: req.body.events
 			});
@@ -36,7 +37,7 @@ router.post('/', (req, res) => {
 				if (err) {
 					return res.status(500).json(dataTransformer.transformError(500, err.message));
 				}
-				return res.status(201).json(result);
+				return res.status(201).json(dataTransformer.transformSubscription(result));
 			})
 		}
 	});

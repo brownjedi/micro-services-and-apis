@@ -4,6 +4,9 @@
 const mongoose = require('mongoose');
 
 let subscriptionSchema = new mongoose.Schema({
+    subscriptionID: {
+        type: Number
+    },
     callback: {
         type: String,
         required: true
