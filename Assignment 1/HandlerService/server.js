@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 // catch 404 and forward it to error handler
 app.use(function (req, res, next) {
-    let err = new Error('404: Not Found');
+    var err = new Error('404: Not Found');
     err.status = 404;
     next(err);
 });
@@ -38,6 +38,6 @@ app.use(function (err, req, res, next) {
 
 // Start the server and listen to the port specified
 app.listen(app.get('port'), function () {
-    console.log(`Handler Express Server started on port: ${app.get('port')}`);
+    console.log('Handler Express Server started on port: ' + app.get('port'));
 });
 
