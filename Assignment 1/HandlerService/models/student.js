@@ -1,13 +1,13 @@
 'use strict';
 
 // Module dependencies
-const mongoose = require('mongoose');
+var mongoose = require('mongoose');
 
-let studentSchema = new mongoose.Schema({
+var studentSchema = new mongoose.Schema({
 
 });
 
-let student = mongoose.model('student', studentSchema);
+var student = mongoose.model('student', studentSchema);
 
 module.exports = student;
 

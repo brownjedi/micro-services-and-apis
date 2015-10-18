@@ -6,6 +6,8 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const databaseConfig = require('./config/database');
+const dispatchRoutes = require('./routes/dispatchRoutes');
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
 
 // Set the MongoDB connection
 mongoose.connect(process.env.mongoDBURL || databaseConfig.url);
@@ -17,11 +19,13 @@ app.set('port', process.env.PORT || 3000);
 // Setting up the middleware services
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 
 // setting all the routes
-
-
+app.use('/api/v1/eventhub/dispatch', dispatchRoutes);
+app.use('/api/v1/eventhub/subscription', subscriptionRoutes);
 
 // catch 404 and forward it to error handler
 app.use((req, res, next) => {
@@ -40,4 +44,3 @@ app.use((err, req, res, next) => {
 app.listen(app.get('port'), () => {
     console.log(`EventHub Express Server started on port: ${app.get('port')}`);
 });
-
