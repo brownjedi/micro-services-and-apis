@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
 const database = require('./config/database');
 const urlMappingRoutes = require('./routes/urlMappingRoutes');
+const urlRoutingRoutes = require('./routes/urlRoutingRoutes');
 const urlMapping = require('./models/urlMapping');
 
 // Set the MongoDB connection
@@ -34,6 +35,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 console.log("Before rerouting");
 // setting all the routes
 app.use('/spi/v1/routes', urlMappingRoutes);
+app.use('/synapse/*', urlRoutingRoutes);
 
 console.log("After rerouting");
 // catch 404 and forward it to error handler
