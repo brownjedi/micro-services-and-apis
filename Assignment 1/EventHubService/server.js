@@ -8,9 +8,11 @@ const mongoose = require('mongoose');
 const databaseConfig = require('./config/database');
 const dispatchRoutes = require('./routes/dispatchRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
+const dataTransformer = require('./utilities/dataTransformer');
 
 // Set the MongoDB connection
 mongoose.connect(process.env.mongoDBURL || databaseConfig.url);
+// mongoose.set('debug', true);
 
 let app = express();
 
@@ -25,11 +27,11 @@ app.use(bodyParser.urlencoded({
 
 // setting all the routes
 app.use('/api/v1/eventhub/dispatch', dispatchRoutes);
-app.use('/api/v1/eventhub/subscription', subscriptionRoutes);
+app.use('/api/v1/eventhub/subscriptions', subscriptionRoutes);
 
 // catch 404 and forward it to error handler
 app.use((req, res, next) => {
-    let err = new Error('404: Not Found');
+    let err = new Error('404: Not Found. The Requested URL does not exist');
     err.status = 404;
     next(err);
 });
@@ -37,7 +39,7 @@ app.use((req, res, next) => {
 // Error Handler
 app.use((err, req, res, next) => {
     res.status(err.status || 500);
-    return res.json(err.message);
+    return res.json(dataTransformer.transformError(err.status || 500, err.message));
 });
 
 // Start the server and listen to the port specified

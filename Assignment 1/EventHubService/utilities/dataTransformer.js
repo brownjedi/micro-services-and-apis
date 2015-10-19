@@ -18,6 +18,10 @@ function transformSubscription (subscriptions) {
 		subscriptions: []
 	};
 
+	if(!subscriptions) {
+		return data;
+	}
+
 	if(subscriptions.constructor !== Array) {
 		pushDataToSubscriptionsArray(subscriptions);
 	} else {
@@ -34,7 +38,7 @@ function transformSubscription (subscriptions) {
 				events: result.events,
 				link: {
 					rel: "self",
-					href: `/api/v1/subscriptions/${result.subscriptionID}`
+					href: `/api/v1/eventhub/subscriptions/${result.subscriptionID}`
 				}
 			}
 		});
