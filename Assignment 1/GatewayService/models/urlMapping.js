@@ -2,7 +2,6 @@
 
 // Module dependencies
 const mongoose = require('mongoose');
-const autoIncrement = require('mongoose-auto-increment');
 
 let urlMappingSchema = new mongoose.Schema({
 	mapping_id: { type: Number, required: true, unique: true },
