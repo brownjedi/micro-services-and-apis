@@ -6,9 +6,13 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const databaseConfig = require('./config/database');
+const studentRoutes = require('./routes/studentRoutes');
+const schemaRoutes = require('./routes/schemaRoutes');
+const dataFormatConverter = require('./utilities/converter');
 
 // Set the MongoDB connection
 mongoose.connect(process.env.mongoDBURL || databaseConfig.url);
+mongoose.set('debug', true);
 
 let app = express();
 
@@ -20,8 +24,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 // setting all the routes
-
-
+app.use('/api/v1/students',studentRoutes);
+app.use('/spi/v1/students/schema', schemaRoutes);
 
 // catch 404 and forward it to error handler
 app.use((req, res, next) => {
@@ -33,7 +37,7 @@ app.use((req, res, next) => {
 // Error Handler
 app.use((err, req, res, next) => {
     res.status(err.status || 500);
-    return res.json(err.message);
+    return res.json(dataFormatConverter.transformError(err.status || 500, err.message));
 });
 
 // Start the server and listen to the port specified
