@@ -21,6 +21,7 @@
     "express": "^4.13.3",
     "mongoose": "^4.1.11",
     "morgan": "^1.6.1",
+    "request": "^2.65.0",
     "superagent": "^1.4.0"
   }
 }
