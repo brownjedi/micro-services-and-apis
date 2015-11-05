@@ -4,19 +4,18 @@
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const databaseConfig = require('./config/database');
+const mongoose = require('mongoose');;
 const dispatchRoutes = require('./routes/dispatchRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const dataTransformer = require('./utilities/dataTransformer');
 
 // Set the MongoDB connection
-mongoose.connect(process.env.mongoDBURL || databaseConfig.url);
+mongoose.connect(process.env.mongoDBURL || require('./config/database').url);
 // mongoose.set('debug', true);
 
 let app = express();
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || process.env.VCAP_APP_PORT || 3000);
 
 // Setting up the middleware services
 app.use(logger('dev'));

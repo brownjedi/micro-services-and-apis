@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "Event Hub service which handles dispatching all the events to different services which subscribe to the event hub",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
+    "serve": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "private": true,
@@ -15,6 +16,9 @@
     "Meril Dsouza <msd2178@columbia.edu>"
   ],
   "license": "MIT",
+  "engines": {
+    "node": "~4.2.1"
+  },
   "dependencies": {
     "async": "^1.4.2",
     "body-parser": "^1.14.1",

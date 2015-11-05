@@ -9,29 +9,6 @@ const dataTransformer = require('./../utilities/dataTransformer');
 
 router.post('/', (req, res) => {
 
-    /*
-    {
-        type: "STUDENT_UPDATED_ERROR",
-        version: "ver",
-        data: {
-            studentID:
-            courses: [2]
-        }
-    }
-
-    1. Check if all courses are present and valid....
-    2. then iterate through courses and add student
-
-    {
-        type: "STUDENT_DELETED",
-        version: "ver",
-        data: {
-            studentID
-        }
-    }
-
-    */
-
     // Check if the user sent the event in the request body.
     // If not, return 400 Bad request error.
     if (!req.body || !req.body.type) {

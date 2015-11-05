@@ -4,6 +4,7 @@
   "description": "A micro service which handles all the CRUD operations on the Course Resource",
   "scripts": {
     "start": "node server.js",
+    "serve": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "private": true,
@@ -15,6 +16,9 @@
     "Meril Dsouza <msd2178@columbia.edu>"
   ],
   "license": "MIT",
+  "engines": {
+    "node": "~4.2.1"
+  },
   "dependencies": {
     "async": "^1.4.2",
     "body-parser": "^1.14.1",
