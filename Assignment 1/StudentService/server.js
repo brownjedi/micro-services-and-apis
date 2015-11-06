@@ -5,18 +5,17 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const databaseConfig = require('./config/database');
 const studentRoutes = require('./routes/studentRoutes');
 const schemaRoutes = require('./routes/schemaRoutes');
 const dataFormatConverter = require('./utilities/converter');
 
 // Set the MongoDB connection
-mongoose.connect(process.env.mongoDBURL || databaseConfig.url);
+mongoose.connect(process.env.mongoDBURL || require('./config/database').url);
 mongoose.set('debug', true);
 
 let app = express();
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || process.env.VCAP_APP_PORT || 3000);
 
 // Setting up the middleware services
 app.use(logger('dev'));
