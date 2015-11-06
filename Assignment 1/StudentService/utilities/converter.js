@@ -3,35 +3,54 @@
 function transformError(status, message) {
 	return {
 		type: "err",
-				errors: [{
-				version: "v1",
-				status: status,
-				message: message
-				}]
+		errors: [{
+			version: "v1",
+			status: status,
+			message: message
+		}]
 	}
 }
 
-function studentDBToJSON(result) {
+function studentDBToJSON(results) {
 	// convert to mentioned schema as per TLDS
-	return {
-			type: "student",
-			"students": [
-			{
-				studentID: result.studentID,
-				data: {
-					studentID:result.studentID,
-					name: {
-						lastName: result.name.lastName,
-						firstName: result.name.firstName
-					},
-					degree: result.degree,
-					major: result.major,
-					courses: result.courses,
-					version: result.version
-				}
-			}
-		]
+
+	let data = {
+		type: "student",
+		"students": []
 	}
+
+	if(results instanceof Array){
+		results.forEach((result) => {
+			data.students.push(generateStudent(result));
+		})
+	} else {
+		data.students.push(generateStudent(results));
+	}
+
+	function generateStudent (student) {
+		if(student) {
+			return {
+				studentID: student.studentID,
+				data: {
+					name: {
+						lastName: student.name.lastName,
+						firstName: student.name.firstName
+					},
+					degree: student.degree,
+					major: student.major,
+					courses: student.courses,
+					version: student.version,
+					link: {
+						rel: "self",
+						href: `/api/v1/students/${student.studentID}`
+					}
+				}
+			};	
+		} else {
+			return {};
+		}
+	}
+	return data;
 }
 
 module.exports.transformError = transformError;

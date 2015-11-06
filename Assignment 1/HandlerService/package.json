@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "A micro service which handles url routing to different instances of same micro service based on some regular expression.",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
+    "serve": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "private": true,
@@ -15,12 +16,16 @@
     "Sai Karthik Reddy Ginni <sg3205@columbia.edu>"
   ],
   "license": "MIT",
+  "engines": {
+    "node": "~4.2.1"
+  },
   "dependencies": {
     "async": "^1.4.2",
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
     "mongoose": "^4.1.11",
     "morgan": "^1.6.1",
+    "request": "^2.65.0",
     "superagent": "^1.4.0"
   }
 }
