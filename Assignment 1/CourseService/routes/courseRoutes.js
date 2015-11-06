@@ -91,7 +91,7 @@ router.put('/:id', (req, res) => {
 
     if (data && data.name) {
 
-        if (data.students && !(data.courses instanceof Array)) {
+        if (data.students && !(data.students instanceof Array)) {
             return res.status(400).json(dataFormatConverter.transformError("400", "Bad Request"));
         }
 
