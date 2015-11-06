@@ -11,7 +11,7 @@ const dataTransformer = require('./utilities/dataTransformer');
 
 // Set the MongoDB connection
 mongoose.connect(process.env.mongoDBURL || require('./config/database').url);
-// mongoose.set('debug', true);
+mongoose.set('debug', true);
 
 let app = express();
 
