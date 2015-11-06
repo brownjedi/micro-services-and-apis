@@ -1,23 +1,42 @@
 "use strict";
 
-function fromMappingDBtoJSON(data) {
-	var json = JSON.parse(JSON.stringify(data));
+const urlMapping = require('./../models/urlMapping');
+const securityString = urlMapping.securityString;
 
-	var modifiedJSON = {
+function fromMappingDBtoJSON(data) {
+	let json = JSON.parse(JSON.stringify(data));
+
+	let modifiedJSON = {
 		mappings: []
 	};
 
 	if (json) {
 		json.forEach(function(mapping) {
-			var temp = {
+			let temp = {
 				"id": mapping._id, 	
 				"mapping_id": mapping.mapping_id,
 				"data": {
 				}
 			};
 
-			if (mapping.publishedURL) temp.data.publishedURL = mapping.publishedURL;
-			if (mapping.privateURL) temp.data.privateURL = mapping.privateURL;		
+			if (mapping.publishedURL) {
+				//Remove security information from the result before display
+				let publishedURLParts = mapping.publishedURL.substring(1).split("/");
+
+				let publishedURL = mapping.publishedURL;
+
+				if (publishedURLParts[0] === securityString) {
+					publishedURL = "/";
+					for (let i=1; i<publishedURLParts.length; i++) {
+						publishedURL = publishedURL + publishedURLParts[i] + "/";
+					}	
+				}
+
+				temp.data.publishedURL = publishedURL;
+			} 
+	
+			if (mapping.privateURL) temp.data.privateURL = mapping.privateURL;
+			if (mapping.port) temp.data.port = mapping.port;		
 
 			modifiedJSON.mappings.push(temp);
 
@@ -29,14 +48,15 @@ function fromMappingDBtoJSON(data) {
 
 
 function fromJSONToMappingDB(data) {
-	var modifiedJSON = [];
-	var json = JSON.parse(JSON.stringify(data));
+	let modifiedJSON = [];
+	let json = JSON.parse(JSON.stringify(data));
 	if (json.mappings != undefined) {
 		json.mappings.forEach(function(mapping) {
 
-			var temp = {
+			let temp = {
 				"publishedURL": mapping.data.publishedURL,
-				"privateURL": mapping.data.privateURL
+				"privateURL": mapping.data.privateURL,
+				"port": mapping.data.port
 			};
 
 			if (mapping.id) {
