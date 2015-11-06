@@ -53,7 +53,7 @@ router.post('/', (req, res) => {
             name: data.name
         }, (err, course) => {
             if (err) {
-                return res.status(400).json(dataFormatConverter.transformError("400", "Bad Request. Course is already present"));
+                return res.status(400).json(dataFormatConverter.transformError("500", err.message));
             } else if (course) {
                 return res.status(409).json(dataFormatConverter.transformError("409", "Error. The resource with the same name already exists"));
             } else {
