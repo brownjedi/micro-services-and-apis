@@ -21,7 +21,7 @@ let courseSchema = new mongoose.Schema({
         max: Number
     },
     students: {
-        type: String
+        type: [String]
     },
     version: {
         type: String,

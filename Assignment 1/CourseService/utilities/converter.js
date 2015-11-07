@@ -14,22 +14,26 @@ function transformError(status, message) {
 
 function courseDBToJSON(results) { // Need to ask (Syntax)
     // convert to standard format as mentioned in TLDS
-    let data = {
-        type: "course",
-        "courses": []
-    }
+    let data = {};
 
     if (results instanceof Array) {
+
+        data = {
+            type: "course",
+            "courses": []
+        }
+
         results.forEach((result) => {
             data.courses.push(generateCourse(result));
         });
     } else {
-        data.courses.push(generateCourse(results));
+        data = generateCourse(results);
     }
 
     function generateCourse(course) {
         if (course) {
             return {
+                type: "courses",
                 courseID: course.courseID,
                 data: {
                     name: course.name,
