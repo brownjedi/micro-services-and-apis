@@ -7,8 +7,6 @@ const Course = require('./../models/course');
 const CourseHistory = require('./../models/courseHistory');
 const dataFormatConverter = require('./../utilities/converter');
 
-// Params and Query are based on URI (you can define the way you need in the URI) 
-
 // CRUD OPERATIONS
 // 1. GET
 router.get('/', (req, res) => {
@@ -192,6 +190,181 @@ router.delete('/:id', (req, res) => {
             return res.status(404).send(dataFormatConverter.transformError("404", "Resource not found"));
         }
     });
+
+});
+
+
+router.get('/:id/students', (req, res) => {
+
+    let course_ID = req.params.id;
+    Course.findOne({
+        courseID: course_ID
+    }, (err, course) => {
+
+        if (err) {
+            return res.status(500).json(dataFormatConverter.transformError("500", err.message));
+        }
+
+        if (course) {
+            course.name = course.name;
+            course.instructor = course.instructor;
+            course.location = course.location;
+            course.dayTime = course.dayTime;
+            course.enrollment = course.enrollment;
+            course.students = course.students;
+            course.version = Date.now();
+            return res.status(200).json(dataFormatConverter.courseDBToJSON(course));
+        } else {
+            return res.status(404).send(dataFormatConverter.transformError("404", "Resource not found"));
+        }
+
+    });
+
+});
+
+
+router.delete('/:id/students/:studentID', (req, res) => {
+
+    let course_ID = req.params.id;
+    let studentID = req.params.studentID;
+
+    Course.findOne({
+        courseID: course_ID
+    }, (err, course) => {
+
+        if (err) {
+            return res.status(500).json(dataFormatConverter.transformError("500", err.message));
+        } // End of IF
+
+        if (course) {
+
+            console.log(course);
+            let studentList = course.students;
+            let index = studentList.indexOf(studentID);
+
+            if (index > -1) {
+
+                studentList.splice(index, 1);
+
+                let courseHistory = new CourseHistory({
+                    courseID: course.courseID,
+                    name: course.name,
+                    instructor: course.instructor,
+                    location: course.location,
+                    dayTime: course.dayTime,
+                    enrollment: course.enrollment,
+                    students: course.students,
+                    version: course.version,
+                    createdAt: course.createdAt,
+                    updatedAt: course.updatedAt
+                });
+
+                courseHistory.save((err, result) => {
+
+                    if (err) {
+                        return res.status(500).json(dataFormatConverter.transformError("500", err.message));
+                    } else {
+
+                        course.name = course.name;
+                        course.instructor = course.instructor;
+                        course.location = course.location;
+                        course.dayTime = course.dayTime;
+                        course.enrollment = course.enrollment;
+                        course.students = studentList;
+                        course.version = Date.now();
+
+                        course.save((err, updatedCourse) => {
+
+                            // Emit an Event
+
+                            if (err) {
+                                return res.status(500).json(dataFormatConverter.transformError("500", err.message));
+                            } else {
+                                return res.status(200).json(dataFormatConverter.courseDBToJSON(updatedCourse));
+                            }
+
+                        });
+                    }
+                });
+            } else {
+                return res.status(400).json(dataFormatConverter.transformError("400", "Bad Request"));
+            }
+        } else {
+            return res.status(404).send(dataFormatConverter.transformError("404", "Resource not found"));
+        }
+
+    });
+});
+
+router.put('/:id/students', (req, res) => {
+    let course_ID = req.params.id;
+    let newStudentList = req.body.data.students;
+
+    if ((newStudentList) && !(newStudentList instanceof Array)) {
+        return res.status(400).json(dataFormatConverter.transformError("400", "Bad Request"));
+    }
+
+    if (req.body.courseID != course_ID) {
+        return res.status(400).json(dataFormatConverter.transformError("400", "Bad Request. The mentioned courseID is not matching the one specified in URI"));
+    }
+
+    Course.findOne({
+        courseID: course_ID
+    }, (err, course) => {
+
+        if (err) {
+            return res.status(500).json(dataFormatConverter.transformError("500", err.message));
+        }
+
+        if (course) {
+
+            let courseHistory = new CourseHistory({
+                courseID: course.courseID,
+                name: course.name,
+                instructor: course.instructor,
+                location: course.location,
+                dayTime: course.dayTime,
+                enrollment: course.enrollment,
+                students: course.students,
+                version: course.version,
+                createdAt: course.createdAt,
+                updatedAt: course.updatedAt
+            });
+
+            courseHistory.save((err, result) => {
+
+                if (err) {
+                    return res.status(500).json(dataFormatConverter.transformError("500", err.message));
+                } else {
+
+                    course.name = course.name;
+                    course.instructor = course.instructor;
+                    course.location = course.location;
+                    course.dayTime = course.dayTime;
+                    course.enrollment = course.enrollment;
+                    course.students = newStudentList;
+                    course.version = Date.now();
+
+                    course.save((err, updatedCourse) => {
+
+                        // Emit an Event
+
+                        if (err) {
+                            return res.status(500).json(dataFormatConverter.transformError("500", err.message));
+                        } else {
+                            return res.status(200).json(dataFormatConverter.courseDBToJSON(updatedCourse));
+                        }
+
+                    });
+                }
+            });
+
+        } else {
+            return res.status(404).send(dataFormatConverter.transformError("404", "Resource not found"));
+        }
+
+    });
+
 
 });
 
