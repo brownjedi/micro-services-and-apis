@@ -1,89 +1,92 @@
-'use strict';
+// 'use strict';
 
-// Module dependencies
-const express = require('express');
-const router = express.Router();
-const Student = require('./../models/student');
+// // Module dependencies
+// const express = require('express');
+// const router = express.Router();
+// const Student = require('./../models/student');
 
-// Ask whether to add/delete the course through studentRoutes.js
+// // Ask whether to add/delete the course through studentRoutes.js
 
-router.post('/', (req, res) => {
-	let Students = req.body.data.students;
-	
-	if(Students && !(Students instanceOf Array)) {
-		// return an error obejct
-	}
+// router.post('/students/:studentID/courses/:courses', (req, res) => {
 
-	Students.forEach((student) => {
-		Student.findOne({studentID: student}, (err, student) => {
+// 	let student_ID = req.params.studentID;
+// 	let courses = req.params.courses;
 
-			if(err) {
-				// Return status code of Error here!!
-			}
+// 	if((courses) && !(courses instanceOf Array)) {
+// 		// return error object
+// 	}
 
-			if(!student) {
-				return {			// mention the Meril's URL
-					"type": "COURSE_ADDED",
-					"version": 	// Need to confirm
-					"data": {
-						"courseID": req.body.data.courseID,
-						"students": req.body.data.students
-					} // End of Data
-				}  // End of return
-			}  // End of if
-			else {
-				// return an error object
-				return {			// mention the Meril's URL (res.send())
-					"type": "COURSE_ADDED_ERROR",
-					"version": 	// Need to confirm
-					"data": {
-						"courseID": req.body.data.courseID,
-						"students": req.body.data.students
-					} // End of data
-				} // End of return
-			} // End of else
-		}); // End of findOne
+// 	Student.findOne({studentID: student_ID}, (err, student) => {
 
-	}); // End of forEach
-}
+// 		if(err) {
+// 		// Return status code of Error here!!
+// 		}
 
-router.delete('', (req, res) => {
-	let Students = req.body.data.students;
+// 		if(student) {
+// 			return {			// mention the Meril's URL
+// 				"type": "COURSE_ADDED",
+// 				"version": 	// Need to confirm
+// 				"data": {
+// 					"courses": courses,
+// 					"studentID": student_ID
+// 				} // End of Data
+// 			}  // End of return
+// 		}  // End of if
+// 		else {
+// 			// return an error object
+// 			return {			// mention the Meril's URL (res.send())
+// 				"type": "COURSE_ADDED_ERROR",
+// 				"version": 	// Need to confirm
+// 				"data": {
+// 					"courses": courses,
+// 					"studentID": student_ID
+// 				} // End of data
+// 			} // End of return
+// 		} // End of else
+// 	}); // End of findOne
+// });
 
-	if(Students && !(Students instanceOf Array)) {
-		// return an error obejct
-	}
+// router.delete('/students/:studentID/courses/:courses', (req, res) => {
+// 	let student_ID = req.params.studentID;
+// 	let courses = req.params.courses;
 
-	Student.forEach((student) => {
-		Student.findOne({studentID: student}, (err, student) => {
-			if(err) {
-				// Query Error (Send ERROR CODE);
-			}
+// 	if(courses && !(courses instanceOf Array)) {
+// 		// return an error obejct
+// 	}
 
-			if(!student) {
-				return {			// mention the Meril's URL (res.send())
-					"type": "COURSE_DELETED_ERROR",
-					"version": 	// Need to confirm
-					"data": {
-						"courseID": req.body.data.courseID,
-						"students": req.body.data.students
-					} // End of data
-				} // End of return
-			}
-			else {
-				return {			// mention the Meril's URL (res.send())
-					"type": "COURSE_DELETED",
-					"version": 	// Need to confirm
-					"data": {
-						"courseID": req.body.data.courseID,
-						"students": req.body.data.students
-					} // End of data
-				} // End of return
-			}
-		});
-	});
+// 	Student.findOne({studentID: student_ID}, (err, student) => {
+// 		if(err) {
+// 			// Query Error (Send ERROR CODE);
+// 		}
 
-});
+// 		if(student) {
+// 			// Now delete the student from the list of courses (Iterate through the list of courses)
+// 			courses.forEach((course) => {
+// 				if()
+// 			});
 
-module.exports = router;
+// 			return {			// mention the Meril's URL (res.send())
+// 				"type": "COURSE_DELETED",
+// 				"version": 	// Need to confirm
+// 				"data": {
+// 					"courses": courses,
+// 					"studentID": student_ID
+// 				} // End of data
+// 			} // End of return
+// 		}
+// 		else {
+// 			return {			// mention the Meril's URL (res.send())
+// 				"type": "COURSE_DELETED_ERROR",
+// 				"version": 	// Need to confirm
+// 				"data": {
+// 					"courseID": courses,
+// 					"students": student_ID
+// 				} // End of data
+// 			} // End of return
+// 		}
+// 	});
+
+// });
+
+// module.exports = router;
 
