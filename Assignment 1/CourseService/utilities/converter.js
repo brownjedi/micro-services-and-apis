@@ -19,7 +19,7 @@ function courseDBToJSON(results) { // Need to ask (Syntax)
     if (results instanceof Array) {
 
         data = {
-            type: "course",
+            type: "courses",
             "courses": []
         }
 
@@ -33,7 +33,7 @@ function courseDBToJSON(results) { // Need to ask (Syntax)
     function generateCourse(course) {
         if (course) {
             return {
-                type: "courses",
+                type: "course",
                 courseID: course.courseID,
                 data: {
                     name: course.name,
