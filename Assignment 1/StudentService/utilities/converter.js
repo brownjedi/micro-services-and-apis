@@ -14,22 +14,24 @@ function transformError(status, message) {
 function studentDBToJSON(results) {
 	// convert to mentioned schema as per TLDS
 
-	let data = {
-		type: "student",
-		"students": []
-	}
+	let data = {};
 
 	if(results instanceof Array){
+		data = {
+			type: "students",
+			"students": []
+		};
 		results.forEach((result) => {
 			data.students.push(generateStudent(result));
 		})
 	} else {
-		data.students.push(generateStudent(results));
+		data = generateStudent(results);
 	}
 
 	function generateStudent (student) {
 		if(student) {
 			return {
+				type: "student",
 				studentID: student.studentID,
 				data: {
 					name: {

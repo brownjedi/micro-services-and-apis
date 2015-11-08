@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 // setting all the routes
 app.use('/api/v1/students',studentRoutes);
 app.use('/spi/v1/students/schema', schemaRoutes);
-app.use('/api/v1/students/eventCallback', eventCallback);
+// app.use('/api/v1/students/eventCallback', eventCallback);
 
 // catch 404 and forward it to error handler
 app.use((req, res, next) => {
