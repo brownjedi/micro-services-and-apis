@@ -55,5 +55,17 @@ function studentDBToJSON(results) {
 	return data;
 }
 
+function eventGenerator (type, studentID, courseID, version) {
+    return {
+        "type": type,
+        "data": {
+        	"studentID": studentID,
+            "courseID": courseID
+        },
+        "version": version
+    };
+} 
+
 module.exports.transformError = transformError;
-module.exports.studentDBToJSON	 = studentDBToJSON; 
+module.exports.studentDBToJSON	 = studentDBToJSON;
+module.exports.eventGenerator = eventGenerator; 
