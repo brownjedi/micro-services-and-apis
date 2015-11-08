@@ -56,6 +56,19 @@ function courseDBToJSON(results) { // Need to ask (Syntax)
     return data;
 }
 
+function eventGenerator (type, courseID, studentID, version) {
+    return {
+        "type": type,
+        "data": {
+            "courseID": courseID,
+            "studentID": studentID
+        },
+        "version": version
+    };
+}
+
+
 // This is done so make the function call visible externally
 module.exports.transformError = transformError;
 module.exports.courseDBToJSON = courseDBToJSON;
+module.exports.eventGenerator = eventGenerator;
