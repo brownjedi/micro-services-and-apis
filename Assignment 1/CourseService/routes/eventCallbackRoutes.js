@@ -27,7 +27,7 @@ function handleCourseAddition(event, res) {
             course.students = (course.students || []);
             course.students.push(studentID);
             course.save();
-            return res.send(dataFormatConverter.eventGenerator('COURSE_ADDED_TO_STUDENT_SUCCESS', courseID, studentID, version));
+            return res.send(dataFormatConverter.eventGenerator('COURSE_ADDED_TO_STUDENT_SUCCESSFUL', courseID, studentID, version));
 
         } else {
             // create an error obejct and emit it to Course Handler URI
@@ -45,27 +45,52 @@ function handleCourseDeletion(event, res) {
     let type = event.type;
 
     Course.findOne({
-        courseID: courseID
-    }, (err, course) => {
-        if (err) {
-            return console.log('Error Occurred while handling course deletion', err);
-        }
-        if (course) {
+            courseID: courseID
+        }, (err, course) => {
+            if (err) {
+                return console.log('Error Occurred while handling course deletion', err);
+            }
+            if (course) {
 
-            course.students = (course.students || []);
-            let index = course.students.indexOf(studentID);
-            console.log(index);
+                course.students = (course.students || []);
+                let index = course.students.indexOf(studentID);
+                console.log(index);
 
-            if (index > -1) {
-                console.log("inside index");
-                course.students.splice(index, 1);
-                course.save((err) => {
-                    if(err) {
-                        return res.send(err);
+                if (index > -1) {
+                    console.log("inside index");
+                    course.students.splice(index, 1);
+                    course.save((err) => {
+                        if (err) {
+                            return res.send(err);
+                        }
+                    });
+                }
+                CourseHistory.findOne({
+                        courseID: courseID
+                    }, (err, courseHistory) => {
+                        if (courseHistory) {
+                            let courseHistory = new CourseHistory({
+                                courseID: courseID,
+                                name: course.name,
+                                instructor: course.instructor,
+                                location: course.location,
+                                dayTime: course.dayTime,
+                                enrollment: course.enrollment,
+                                students: course.students,
+                                version: version,
+                                createdAt: course.createdAt,
+                                updatedAt: course.updatedAt
+                            });
+
+                            courseHistory.save((err)) => {
+                                if (err) {
+                                    return res.send(err);
+                                }
+                            });
                     }
                 });
-            }
-            return res.send(dataFormatConverter.eventGenerator('COURSE_DELETED_TO_STUDENT_SUCCESS', courseID, studentID, version));
+
+            return res.send(dataFormatConverter.eventGenerator('COURSE_DELETED_TO_STUDENT_SUCCESSFUL', courseID, studentID, version));
         }
     });
 }
@@ -82,7 +107,7 @@ function handleStudentAdditionError(event) {
                 courseID: courseID
             }, callback);
         },
-        function(callback, course) {
+        function(course, callback) {
             if (course && course.version === version) {
                 CourseHistory.findOne({
                     courseID: courseID
@@ -97,7 +122,7 @@ function handleStudentAdditionError(event) {
                 callback(true);
             }
         },
-        function(callback, course, courseHistory) {
+        function(course, courseHistory, callback) {
             // check if courseHistory is null....if its null...then delete course
             // else course.name = courseHistory.name and then course.save -> courseHistory.remove
             if (courseHistory) { // checking if not null or undefined
@@ -149,12 +174,9 @@ router.post('/', (req, res) => {
                 handleStudentAdditionError(req.body);
                 break;
         }
-        return res.status(204).send(errorObject);
     } else {
         return res.status(400).end();
     }
 });
 
 module.exports = router;
-
-// iterate through the studnet list and update accordingly

@@ -129,8 +129,6 @@ router.put('/:id', (req, res) => {
 
                         course.save((err, updatedCourse) => {
 
-                            // Emit an Event
-
                             if (err) {
                                 return res.status(500).json(dataFormatConverter.transformError("500", err.message));
                             } else {
