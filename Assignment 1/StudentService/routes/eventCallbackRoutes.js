@@ -1,92 +1,145 @@
-// 'use strict';
+'use strict';
 
-// // Module dependencies
-// const express = require('express');
-// const router = express.Router();
-// const Student = require('./../models/student');
+// Module dependencies
+const express = require('express');
+const router = express.Router();
+const Student = require('./../models/student');
+const StudentHistory = require('./../models/studentHistory');
+const async = require('async');
+const dataFormatConverter = require('./../utilities/converter');
 
-// // Ask whether to add/delete the course through studentRoutes.js
+function handleStudentAddition(event, res) {
+    let courseID = event.data.courseID;
+    let studentID = event.data.studentID;
+    let version = event.version;
 
-// router.post('/students/:studentID/courses/:courses', (req, res) => {
+    Student.findOne({
+        studentID: studentID
+    }, (err, student) => {
 
-// 	let student_ID = req.params.studentID;
-// 	let courses = req.params.courses;
+        if (err) {
+            return console.log('Error Occurred while handling student addition', err);
+        }
 
-// 	if((courses) && !(courses instanceOf Array)) {
-// 		// return error object
-// 	}
+        if (student) {
+            student.courses = (student.courses || []);
+            student.courses.push(courseID);
+            student.save((err) => {
+                if (err) {
+                    return res.send(err);
+                }
+            });
+            return res.send(dataFormatConverter.eventGenerator('STUDENT_ADDED_TO_COURSE_SUCCESS', studentID, courseID, version));
+        } else {
+            return res.send(dataFormatConverter.eventGenerator('STUDENT_ADDED_TO_COURSE_ERROR', courseID, studentID, version));
+        }
 
-// 	Student.findOne({studentID: student_ID}, (err, student) => {
+    });
+}
 
-// 		if(err) {
-// 		// Return status code of Error here!!
-// 		}
+function handleStudentDeletion(event, res) {
 
-// 		if(student) {
-// 			return {			// mention the Meril's URL
-// 				"type": "COURSE_ADDED",
-// 				"version": 	// Need to confirm
-// 				"data": {
-// 					"courses": courses,
-// 					"studentID": student_ID
-// 				} // End of Data
-// 			}  // End of return
-// 		}  // End of if
-// 		else {
-// 			// return an error object
-// 			return {			// mention the Meril's URL (res.send())
-// 				"type": "COURSE_ADDED_ERROR",
-// 				"version": 	// Need to confirm
-// 				"data": {
-// 					"courses": courses,
-// 					"studentID": student_ID
-// 				} // End of data
-// 			} // End of return
-// 		} // End of else
-// 	}); // End of findOne
-// });
+    let courseID = event.data.courseID;
+    let studentID = event.data.studentID;
+    let version = event.version;
+    let type;
 
-// router.delete('/students/:studentID/courses/:courses', (req, res) => {
-// 	let student_ID = req.params.studentID;
-// 	let courses = req.params.courses;
+    Student.findOne({
+        studentID: studentID
+    }, (err, student) => {
+        if (err) {
+            return console.log('Error Occurred while handling student deletion', err);
+        }
 
-// 	if(courses && !(courses instanceOf Array)) {
-// 		// return an error obejct
-// 	}
+        if (student) {
+            student.courses = (student.courses || []);
+            let index = student.courses.indexOf(courseID);
+            if (index > -1) {
+                student.courses.splice(index, 1);
+                student.save((err) => {
+                    if (err) {
+                        return res.status(400).send(err);
+                    }
+                });
+            }
+            return res.send(dataFormatConverter.eventGenerator('STUDENT_DELETED_FROM_COURSES_SUCCESS', studentID, courseID, version));
+        }
+    });
+}
 
-// 	Student.findOne({studentID: student_ID}, (err, student) => {
-// 		if(err) {
-// 			// Query Error (Send ERROR CODE);
-// 		}
+function handleCourseAdditionError(event) {
+    let courseID = event.data.courseID;
+    let studentID = event.data.studentID;
+    let version = event.version;
 
-// 		if(student) {
-// 			// Now delete the student from the list of courses (Iterate through the list of courses)
-// 			courses.forEach((course) => {
-// 				if()
-// 			});
+    async.waterfall([
+        function(callback) {
+            Student.findOne({
+                studentID: studentID
+            }, callback);
+        },
+        function(callback, student) {
+            if (student && student.version === version) {
+                StudentHistory.findOne({
+                    studentID: studentID
+                }, function(err, studentHistory) {
+                    if (err) {
+                        return callback(err);
+                    } else {
+                        callback(null, student, studentHistory);
+                    }
+                });
+            } else {
+                callback(true);
+            }
+        },
+        function(callback, student, studentHistory) {
+            // check if studentHistory is null....if its null...then delete student
+            // else student.name = studentHistory.name and then student.save -> courseHistory.remove
+            if (studentHistory) { // checking if not null or undefined
+                student.studentID = studentHistory.studentID,
+                student.name.firstName = studentHistory.name.firstName,
+                student.name.lastName = studentHistory.name.lastName
+                student.degree = studentHistory.degree,
+                student.major = studentHistory.major,
+                student.courses = studentHistory.courses,
+                student.version = studentHistory.version
+                course.save((err, result) => {
+                    if (err) {
+                        return callback(err);
+                    } else {
+                        courseHistory.remove(callback);
+                    }
+                });
+            } else {
+                course.remove(callback);
+            }
+        }
+    ], (err) => {
+        if (err) {
+            console.log(err);
+        }
+    });
+}
 
-// 			return {			// mention the Meril's URL (res.send())
-// 				"type": "COURSE_DELETED",
-// 				"version": 	// Need to confirm
-// 				"data": {
-// 					"courses": courses,
-// 					"studentID": student_ID
-// 				} // End of data
-// 			} // End of return
-// 		}
-// 		else {
-// 			return {			// mention the Meril's URL (res.send())
-// 				"type": "COURSE_DELETED_ERROR",
-// 				"version": 	// Need to confirm
-// 				"data": {
-// 					"courseID": courses,
-// 					"students": student_ID
-// 				} // End of data
-// 			} // End of return
-// 		}
-// 	});
+router.post('/', (req, res) => {
 
-// });
+    if (req.body && req.body.data && req.body.type) {
 
-// module.exports = router;
+        switch (req.body.type.toUpperCase()) {
+            case 'STUDENT_ADDED_TO_COURSE':
+                return handleStudentAddition(req.body, res);
+                break;
+            case 'STUDENT_DELETED_FROM_COURSE':
+                return handleStudentDeletion(req.body, res);
+                break;
+            case 'COURSE_ADDED_TO_STUDENT_ERROR':
+                return handleCourseAdditionError(req.body);
+                break;
+        }
+    } else {
+        return res.status(400).end();
+    }
+});
 
+module.exports = router;
