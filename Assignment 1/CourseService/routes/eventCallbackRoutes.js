@@ -82,7 +82,7 @@ function handleCourseDeletion(event, res) {
                                 updatedAt: course.updatedAt
                             });
 
-                            courseHistory.save((err)) => {
+                            courseHistory.save((err) => {
                                 if (err) {
                                     return res.send(err);
                                 }
