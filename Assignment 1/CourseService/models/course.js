@@ -5,29 +5,7 @@ const mongoose = require('mongoose');
 const sequence = require('./counter');
 
 // Define the Course Scheme
-let courseSchema = new mongoose.Schema({
-    courseID: Number,
-    name: {
-        type: String,
-        required: true
-    },
-    instructor: String,
-    location: Number,
-    dayTime: String,
-    createdAt: Date,
-    updatedAt: Date,
-    enrollment: {
-        current: Number,
-        max: Number
-    },
-    students: {
-        type: [String]
-    },
-    version: {
-        type: String,
-        default: Date.now
-    }
-}, {
+let courseSchema = new mongoose.Schema(require('./schema/courseSchema.json'), {
     timestamps: {
         createdAt: 'createdAt',
         updatedAt: 'updatedAt'

@@ -8,9 +8,6 @@ const CourseHistory = require('./../models/courseHistory');
 const async = require('async');
 const dataFormatConverter = require('./../utilities/converter');
 
-var errorObject;
-var temp;
-
 function handleCourseAddition(event, res) {
     let courseID = event.data.courseID;
     let studentID = event.data.studentID;
