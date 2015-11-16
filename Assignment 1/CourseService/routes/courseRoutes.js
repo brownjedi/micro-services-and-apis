@@ -7,8 +7,6 @@ const Course = require('./../models/course');
 const CourseHistory = require('./../models/courseHistory');
 const dataFormatConverter = require('./../utilities/converter');
 
-// Params and Query are based on URI (you can define the way you need in the URI) 
-
 // CRUD OPERATIONS
 // 1. GET
 router.get('/', (req, res) => {
@@ -87,11 +85,11 @@ router.post('/', (req, res) => {
 
 // 3. PUT
 router.put('/:id', (req, res) => {
-    let data = req.body;
+    let body = req.body;
 
-    if (data && data.name) {
+    if (body && body.data && body.data.name) {
 
-        if (data.students && !(data.students instanceof Array)) {
+        if (body.data.students && !(body.data.students instanceof Array)) {
             return res.status(400).json(dataFormatConverter.transformError("400", "Bad Request"));
         }
 
@@ -121,17 +119,15 @@ router.put('/:id', (req, res) => {
                         return res.status(500).json(dataFormatConverter.transformError("500", err.message));
                     } else {
 
-                        course.name = data.name;
-                        course.instructor = data.instructor;
-                        course.location = data.location;
-                        course.dayTime = data.dayTime;
-                        course.enrollment = data.enrollment;
-                        course.students = data.students;
+                        course.name = body.data.name;
+                        course.instructor = body.data.instructor;
+                        course.location = body.data.location;
+                        course.dayTime = body.data.dayTime;
+                        course.enrollment = body.data.enrollment;
+                        course.students = body.data.students;
                         course.version = Date.now();
 
                         course.save((err, updatedCourse) => {
-
-                            // Emit an Event
 
                             if (err) {
                                 return res.status(500).json(dataFormatConverter.transformError("500", err.message));

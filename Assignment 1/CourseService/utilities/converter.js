@@ -14,22 +14,26 @@ function transformError(status, message) {
 
 function courseDBToJSON(results) { // Need to ask (Syntax)
     // convert to standard format as mentioned in TLDS
-    let data = {
-        type: "course",
-        "courses": []
-    }
+    let data = {};
 
     if (results instanceof Array) {
+
+        data = {
+            type: "courses",
+            "courses": []
+        }
+
         results.forEach((result) => {
             data.courses.push(generateCourse(result));
         });
     } else {
-        data.courses.push(generateCourse(results));
+        data = generateCourse(results);
     }
 
     function generateCourse(course) {
         if (course) {
             return {
+                type: "course",
                 courseID: course.courseID,
                 data: {
                     name: course.name,
@@ -52,6 +56,19 @@ function courseDBToJSON(results) { // Need to ask (Syntax)
     return data;
 }
 
+function eventGenerator (type, courseID, studentID, version) {
+    return {
+        "type": type,
+        "data": {
+            "courseID": courseID,
+            "studentID": studentID
+        },
+        "version": version
+    };
+}
+
+
 // This is done so make the function call visible externally
 module.exports.transformError = transformError;
 module.exports.courseDBToJSON = courseDBToJSON;
+module.exports.eventGenerator = eventGenerator;
