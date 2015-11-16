@@ -35,11 +35,13 @@ router.all('*', function(req, res) {
     if (query.charAt(query.length - 1) == "/")
         query = query.substring(0, query.length - 1);
 
+    console.log("1.", query);
+
     Handler.find({
         "httpMethod": req.method
     }, function(err, results) { 
         if (err) {
-            return res.status(500);
+            return res.status(500).send(err.message);
         }
         var done = false;
 
@@ -57,17 +59,18 @@ router.all('*', function(req, res) {
             }
 
             if (id != null) {
+                console.log("Booga", "Sanjana is super rich!!!", id);
                 if (id.charAt(0).search(new RegExp(results[i].regex)) != -1) { //course regexp will be [a-z] in db
                     var newURL = results[i].targetUrl;
                     if(req.method != "POST") {
 	                    var i = newURL.lastIndexOf(':');
 	                    newURL = newURL.substring(0, i) + id;
                   	}
-                  	console.log("send req to this url: " + newURL);
+                  	console.log("send req to this url: " + newURL, req.method, req.body, req.get('Content-Type'));
                     request({
                         url: newURL, //URL to hit
                         method: req.method, //Specify the method
-                        json: req.body,
+                        data: req.body,
                         headers: { //We can define headers too
                             'Content-Type': req.get('Content-Type')
                         }
@@ -75,7 +78,8 @@ router.all('*', function(req, res) {
                         if (error) {
                             return res.status(error.status || 500).send(error.message);
                         }
-                        return res.status(response.statusCode).send(response.body);
+                        console.log(JSON.stringify(response));
+                        return res.status(response.statusCode).set('Content-Type', response.headers['content-type']).send(response.body);
                     });
                     done = true;
                     break;
