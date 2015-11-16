@@ -9,6 +9,8 @@ const errorHandler = require('./../utilities/errorHandler');
 
 const urlMappingCollection = urlMapping.urlMappingCollection;
 
+const securityString = urlMapping.securityString;
+
 router.post('/', (req, res) => {
 	//Add a new mapping to mongoDB
 
@@ -16,25 +18,36 @@ router.post('/', (req, res) => {
 		return res.status(400).send(errorHandler.getErrorJSON(400, "Bad Request. No request body. POST method must contain body."));
 	}
 
-	var newMapping = dataConverter.fromJSONToMappingDB(req.body);
+	let newMapping = dataConverter.fromJSONToMappingDB(req.body);
 
-	if (newMapping[0] == undefined || newMapping[0].publishedURL == undefined || newMapping[0].privateURL == undefined) {
+	if (newMapping[0] == undefined || newMapping[0].publishedURL == undefined || newMapping[0].privateURL == undefined || newMapping[0].port == undefined) {
 		//Bad request since one of the parameters is not present
 		return res.status(400).send(errorHandler.getErrorJSON(400, "Bad Request. Incomplete request body. POST method must contain data."));
 	}
 
+	//Check if the security string was passed in for adding a mapping
+	let requestURLParts = newMapping[0].publishedURL.substring(1).split("/");
+	let secStrFromRequest = requestURLParts[0];
+
+	if (secStrFromRequest !== securityString) {
+		return res.status(400).send(errorHandler.getErrorJSON(400, "Bad Request. POST method must contain data."));
+	}
+
+	let publishedURLInDB = newMapping[0].publishedURL;
+
 	//Check if a document exists. If not, create a new document to be inserted into mongoDB
-	urlMappingCollection.find({publishedURL: newMapping[0].publishedURL}, function(err, existingMappings) {
+	urlMappingCollection.find({publishedURL: publishedURLInDB}, function(err, existingMappings) {
 		if (err) {
 			return res.status(err.status).send(errorHandler.getErrorJSON(err.status, err.message));
 		}
 		else {
 			// object of the mapping
 			if (existingMappings[0] != undefined && existingMappings[0] != null) {
-  				return res.status(409).send(errorHandler.getErrorJSON(409, "Mapping already exists for " + existingMapping.publishedURL));
+  				return res.status(409).send(errorHandler.getErrorJSON(409, "Mapping already exists for " + existingMappings[0].publishedURL));
   			}
 
-  			let mapping = new urlMappingCollection({publishedURL: newMapping[0].publishedURL, privateURL: newMapping[0].privateURL});
+
+  			let mapping = new urlMappingCollection({publishedURL: publishedURLInDB, privateURL: newMapping[0].privateURL, port: newMapping[0].port});
 
 			mapping.save(function (err, mapping) {
 	  			if (err) {
@@ -59,6 +72,19 @@ router.get('/', (req, res) => {
   		}
   		else {
   			// object of all the mappings
+
+			//Remove security information from the result before display
+			for (let i=0; i < mappings.length; i++) {
+				let publishedURLParts = mappings[i].publishedURL.substring(1).split("/");
+				let publishedURL = "";
+				for (let i=1; i<publishedURLParts.length; i++) {
+					publishedURL = publishedURL + "/" + publishedURLParts[i];
+				}
+
+				mappings[i].publishedURL = publishedURL;
+			}
+
+			// console.log(mappings);
   			return res.status(200).send(dataConverter.fromMappingDBtoJSON(mappings));
   		}
 	});
@@ -97,9 +123,9 @@ router.put('/:id', (req, res) => {
 			return res.status(400).send(errorHandler.getErrorJSON(err.status, "Bad Request. No request body. PUT method must contain body."));
 		}
 
-		var newMapping = dataConverter.fromJSONToMappingDB(req.body);
+		let newMapping = dataConverter.fromJSONToMappingDB(req.body);
 
-		if (newMapping[0] == undefined || newMapping[0].privateURL == undefined) {
+		if (newMapping[0] == undefined || (newMapping[0].privateURL == undefined && newMapping[0].port == undefined)) {
 			return res.status(400).send(errorHandler.getErrorJSON(400, "Bad request. Incomplete request body. PUT requires data in body."));
 		}
 
@@ -113,7 +139,14 @@ router.put('/:id', (req, res) => {
   					return res.status(404).send(errorHandler.getErrorJSON(404, "Mapping id does not exist"));
   				}
 
-  				mappings[0].privateURL = newMapping[0].privateURL;
+  				if (newMapping[0].privateURL != null) {
+  					mappings[0].privateURL = newMapping[0].privateURL;
+  				}
+
+  				if (newMapping[0].port != null) {
+  					mappings[0].port = newMapping[0].port;
+  				}
+
   				mappings[0].save(function(err, newMapping) {
     				if (err) {
     					return res.status(err.status).send(errorHandler.getErrorJSON(err.status, err.message));
@@ -135,13 +168,23 @@ router.put('/', (req, res) => {
 		return res.status(400).send(errorHandler.getErrorJSON(err.status, "Bad Request. No request body. PUT method must contain a body."));
 	}
 
-	var newMapping = dataConverter.fromJSONToMappingDB(req.body);
+	let newMapping = dataConverter.fromJSONToMappingDB(req.body);
 
-	if (newMapping[0] == undefined || newMapping[0].publishedURL == undefined || newMapping[0].privateURL == undefined) {
+	if (newMapping[0] == undefined || newMapping[0].publishedURL == undefined || (newMapping[0].privateURL == undefined && newMapping[0].port == undefined)) {
 		return res.status(400).send(errorHandler.getErrorJSON(400, "Bad request. Incomplete request body. PUT requires data in request body."));
 	}
 
-	urlMappingCollection.find({publishedURL: newMapping[0].publishedURL}, function(err, mappings) {
+	//Check if the security string was passed in for adding a mapping
+	let requestURLParts = newMapping[0].publishedURL.substring(1).split("/");
+	let secStrFromRequest = requestURLParts[0];
+
+	if (secStrFromRequest !== securityString) {
+		return res.status(400).send(errorHandler.getErrorJSON(400, "Bad Request. POST method must contain data."));
+	}
+
+	let publishedURLInDB = newMapping[0].publishedURL;
+
+	urlMappingCollection.find({publishedURL: publishedURLInDB}, function(err, mappings) {
 		if (err) {
 			return res.status(err.status).send(errorHandler.getErrorJSON(err.status, err.message));
 		}
@@ -151,7 +194,13 @@ router.put('/', (req, res) => {
   				return res.status(404).send(errorHandler.getErrorJSON(404, "Mapping id does not exist"));
   			}
 
-			mappings[0].privateURL = newMapping[0].privateURL;
+			if (newMapping[0].privateURL != null) {
+  				mappings[0].privateURL = newMapping[0].privateURL;
+  			}
+
+  			if (newMapping[0].port != null) {
+  				mappings[0].port = newMapping[0].port;
+  			}
 
 			mappings[0].save(function(err, afterModifyMapping) {
 				if (err) {
@@ -203,13 +252,23 @@ router.delete('/', (req, res) => {
 		return res.status(400).send(errorHandler.getErrorJSON(err.status, "Bad Request. No request body. DELETE method must contain a body or a mapping id."));
 	}
 
-	var newMapping = dataConverter.fromJSONToMappingDB(req.body);
+	let newMapping = dataConverter.fromJSONToMappingDB(req.body);
 
 	if (newMapping[0] == undefined || newMapping[0].publishedURL == undefined) {
 		return res.status(400).send(errorHandler.getErrorJSON(400, "Bad request. Incomplete request body. DELETE method requires data in request body or a mapping id."));
 	}
 
-	urlMappingCollection.find({publishedURL: newMapping[0].publishedURL}, function(err, mappings) {
+	//Check if the security string was passed in for adding a mapping
+	let requestURLParts = newMapping[0].publishedURL.substring(1).split("/");
+	let secStrFromRequest = requestURLParts[0];
+
+	if (secStrFromRequest !== securityString) {
+		return res.status(400).send(errorHandler.getErrorJSON(400, "Bad Request. POST method must contain data."));
+	}
+
+	let publishedURLInDB = newMapping[0].publishedURL;
+
+	urlMappingCollection.find({publishedURL: publishedURLInDB}, function(err, mappings) {
 		if (err) {
 			return res.status(err.status).send(err.message);
 		}

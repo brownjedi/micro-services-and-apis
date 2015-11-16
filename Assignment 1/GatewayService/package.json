@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "API Gateway micro service which routes the public (exposed) urls to private urls",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
+    "serve": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "private": true,
@@ -15,15 +16,18 @@
     "Meril Dsouza <msd2178@columbia.edu>"
   ],
   "license": "MIT",
+  "engines": {
+    "node": "~4.2.1"
+  },
   "dependencies": {
-    "async": "^1.4.2",
-    "body-parser": "^1.14.1",
-    "express": "^4.13.3",
-    "mongoose": "^4.0.8",
-    "mongoose-auto-increment": "^4.0.0",
-    "morgan": "^1.6.1",
-    "npm": "^3.3.8",
-    "request": "^2.65.0",
-    "superagent": "^1.4.0"
+    "async": "~1.4.2",
+    "body-parser": "~1.14.1",
+    "express": "~4.13.3",
+    "mongoose": "~4.0.8",
+    "mongoose-auto-increment": "~4.0.0",
+    "morgan": "~1.6.1",
+    "npm": "~3.3.8",
+    "request": "~2.65.0",
+    "superagent": "~1.4.0"
   }
 }

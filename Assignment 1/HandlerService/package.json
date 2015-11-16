@@ -16,6 +16,9 @@
     "Sai Karthik Reddy Ginni <sg3205@columbia.edu>"
   ],
   "license": "MIT",
+  "engines": {
+    "node": "~4.2.1"
+  },
   "dependencies": {
     "async": "^1.4.2",
     "body-parser": "^1.14.1",

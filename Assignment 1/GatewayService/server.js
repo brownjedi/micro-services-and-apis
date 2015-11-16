@@ -6,13 +6,12 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
-const database = require('./config/database');
 const urlMappingRoutes = require('./routes/urlMappingRoutes');
 const urlRoutingRoutes = require('./routes/urlRoutingRoutes');
 const urlMapping = require('./models/urlMapping');
 
 // Set the MongoDB connection
-let connection = mongoose.connect(process.env.mongoDBURL || database.url);
+let connection = mongoose.connect(process.env.mongoDBURL || require('./config/database').url);
 
 autoIncrement.initialize(connection);
 urlMapping.urlMappingSchema.plugin(autoIncrement.plugin, {
@@ -24,8 +23,7 @@ urlMapping.urlMappingSchema.plugin(autoIncrement.plugin, {
 
 let app = express();
 
-app.set('port', process.env.PORT || 3000);
-
+app.set('port', process.env.PORT || process.env.VCAP_APP_PORT || 3000);
 
 // Setting up the middleware services
 app.use(logger('dev'));

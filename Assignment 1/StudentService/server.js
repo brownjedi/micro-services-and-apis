@@ -5,18 +5,18 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const databaseConfig = require('./config/database');
 const studentRoutes = require('./routes/studentRoutes');
 const schemaRoutes = require('./routes/schemaRoutes');
 const dataFormatConverter = require('./utilities/converter');
+const eventCallbackRoutes = require('./routes/eventCallbackRoutes');
 
 // Set the MongoDB connection
-mongoose.connect(process.env.mongoDBURL || databaseConfig.url);
+mongoose.connect(process.env.mongoDBURL || require('./config/database').url);
 mongoose.set('debug', true);
 
 let app = express();
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || process.env.VCAP_APP_PORT || 3000);
 
 // Setting up the middleware services
 app.use(logger('dev'));
@@ -26,6 +26,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 // setting all the routes
 app.use('/api/v1/students',studentRoutes);
 app.use('/spi/v1/students/schema', schemaRoutes);
+app.use('/api/v1/students/eventCallback', eventCallbackRoutes);
 
 // catch 404 and forward it to error handler
 app.use((req, res, next) => {

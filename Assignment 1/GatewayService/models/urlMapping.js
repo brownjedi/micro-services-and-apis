@@ -6,10 +6,13 @@ const mongoose = require('mongoose');
 let urlMappingSchema = new mongoose.Schema({
 	mapping_id: { type: Number, required: true, unique: true },
 	publishedURL : { type: String, unique: true, required: true },
-	privateURL : { type: String, required: true }
+	privateURL : { type: String, required: true },
+	port: { type: Number, required: true}
 });
 
 let urlMappingCollection = mongoose.model('urlMapping', urlMappingSchema);
 
-module.exports = { urlMappingCollection, urlMappingSchema };
+let securityString = "skyfall";
+
+module.exports = { urlMappingCollection, urlMappingSchema, securityString };
 
