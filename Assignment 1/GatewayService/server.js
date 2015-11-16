@@ -6,7 +6,6 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
-const database = require('./config/database');
 const urlMappingRoutes = require('./routes/urlMappingRoutes');
 const urlRoutingRoutes = require('./routes/urlRoutingRoutes');
 const urlMapping = require('./models/urlMapping');

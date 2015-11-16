@@ -17,8 +17,8 @@ router.all('/*', (req, res) => {
 	let publishedURL = req.originalUrl;
 	console.log("Host: " + req.get('host'));
 
-	let hostParts = req.get('host').split(":");
-	let hostname = hostParts[0]; //Host name is to be appended with the new port number for rerouting
+	// let hostParts = req.get('host').split(":");
+	// let hostname = hostParts[0]; //Host name is to be appended with the new port number for rerouting
 
 	let urlParts = publishedURL.substring(1).split("/");
 	console.log(urlParts);
@@ -42,7 +42,8 @@ router.all('/*', (req, res) => {
 		else {
 			// object of the mapping
 			if (existingMappings.length > 0) {
-				let newURL = req.protocol + '://' + hostname + ":" + existingMappings[0].port + existingMappings[0].privateURL + remainingURL;
+				// let newURL = req.protocol + '://' + hostname + ":" + existingMappings[0].port + existingMappings[0].privateURL + remainingURL;
+				let newURL = req.protocol + '://' + existingMappings[0].privateURL + remainingURL;
 				console.log("NewURL: " + newURL);
 
 				request({
