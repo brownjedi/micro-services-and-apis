@@ -14,7 +14,7 @@ function handleCourseAddition(event, res) {
     let version = event.version;
     let type;
 
-    Course.findOne({
+    Course.getInstance().findOne({
         courseID: courseID
     }, (err, course) => {
         if (err) {
@@ -41,7 +41,7 @@ function handleCourseDeletion(event, res) {
     let version = event.version;
     let type = event.type;
 
-    Course.findOne({
+    Course.getInstance().findOne({
             courseID: courseID
         }, (err, course) => {
             if (err) {
@@ -62,11 +62,11 @@ function handleCourseDeletion(event, res) {
                         }
                     });
                 }
-                CourseHistory.findOne({
+                CourseHistory.getInstance().findOne({
                         courseID: courseID
                     }, (err, courseHistory) => {
                         if (courseHistory) {
-                            let courseHistory = new CourseHistory({
+                            let courseHistory = new CourseHistory.getInstance()({
                                 courseID: courseID,
                                 name: course.name,
                                 instructor: course.instructor,
@@ -100,13 +100,13 @@ function handleStudentAdditionError(event) {
 
     async.waterfall([
         function(callback) {
-            Course.findOne({
+            Course.getInstance().findOne({
                 courseID: courseID
             }, callback);
         },
         function(course, callback) {
             if (course && course.version === version) {
-                CourseHistory.findOne({
+                CourseHistory.getInstance().findOne({
                     courseID: courseID
                 }, function(err, courseHistory) {
                     if (err) {

@@ -1,6 +1,5 @@
 'use strict';
 
-
 function transformError(status, message) {
     return {
         type: "error",
@@ -10,7 +9,18 @@ function transformError(status, message) {
             message: message
         }]
     };
-}   
+}
+
+function transformSchema(schema, name) {
+    let output = {
+        type: "schema"
+    };
+    if (name) {
+        output.fieldName = name;
+    }
+    output.schema = schema;
+    return output;
+}
 
 function courseDBToJSON(results) { // Need to ask (Syntax)
     // convert to standard format as mentioned in TLDS
@@ -56,7 +66,7 @@ function courseDBToJSON(results) { // Need to ask (Syntax)
     return data;
 }
 
-function eventGenerator (type, courseID, studentID, version) {
+function eventGenerator(type, courseID, studentID, version) {
     return {
         "type": type,
         "data": {
@@ -67,8 +77,8 @@ function eventGenerator (type, courseID, studentID, version) {
     };
 }
 
-
 // This is done so make the function call visible externally
 module.exports.transformError = transformError;
+module.exports.transformSchema = transformSchema;
 module.exports.courseDBToJSON = courseDBToJSON;
 module.exports.eventGenerator = eventGenerator;

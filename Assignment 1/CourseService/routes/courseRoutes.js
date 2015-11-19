@@ -10,7 +10,7 @@ const dataFormatConverter = require('./../utilities/converter');
 // CRUD OPERATIONS
 // 1. GET
 router.get('/', (req, res) => {
-    Course.find({}, (err, courses) => {
+    Course.getInstance().find({}, (err, courses) => {
         if (err) {
             return res.status(500).json(dataFormatConverter.transformError("500", err.message));
         }
@@ -20,7 +20,7 @@ router.get('/', (req, res) => {
 
 // *
 router.get('/:id', (req, res) => {
-    Course.findOne({
+    Course.getInstance().findOne({
         courseID: req.params.id
     }, (err, course) => {
         console.log(course);
@@ -47,7 +47,7 @@ router.post('/', (req, res) => {
         }
 
         // Check if the course is already present with same name
-        Course.findOne({
+        Course.getInstance().findOne({
             name: data.name
         }, (err, course) => {
             if (err) {
@@ -55,7 +55,7 @@ router.post('/', (req, res) => {
             } else if (course) {
                 return res.status(409).json(dataFormatConverter.transformError("409", "Error. The resource with the same name already exists"));
             } else {
-                let course = new Course({
+                let course = new Course.getInstance()({
                     name: data.name,
                     instructor: data.instructor,
                     location: data.location,
@@ -93,7 +93,7 @@ router.put('/:id', (req, res) => {
             return res.status(400).json(dataFormatConverter.transformError("400", "Bad Request"));
         }
 
-        Course.findOne({
+        Course.getInstance().findOne({
             courseID: req.params.id
         }, (err, course) => {
             if (err) {
@@ -102,7 +102,7 @@ router.put('/:id', (req, res) => {
             if (!course) {
                 return res.status(404).json(dataFormatConverter.transformError("404", "Resource not found"));
             } else {
-                let courseHistory = new CourseHistory({
+                let courseHistory = new CourseHistory.getInstance()({
                     courseID: course.courseID,
                     name: course.name,
                     instructor: course.instructor,
@@ -147,7 +147,7 @@ router.put('/:id', (req, res) => {
 
 // 4. DELETE
 router.delete('/:id', (req, res) => {
-    Course.findOne({
+    Course.getInstance().findOne({
         courseID: req.params.id
     }, (err, course) => {
         if (err) {
@@ -155,7 +155,7 @@ router.delete('/:id', (req, res) => {
         }
         if (course) {
 
-            let courseHistory = new CourseHistory({
+            let courseHistory = new CourseHistory.getInstance()({
                 courseID: course.courseID,
                 name: course.name,
                 instructor: course.instructor,

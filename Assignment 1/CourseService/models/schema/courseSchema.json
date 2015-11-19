@@ -1,17 +1,33 @@
 {
-    "courseID": "Number",
+    "courseID": {
+        "type": "Number"
+    },
     "name": {
         "type": "String",
         "required": true
     },
-    "instructor": "String",
-    "location": "String",
-    "dayTime": "String",
-    "createdAt": "Date",
-    "updatedAt": "Date",
+    "instructor": {
+        "type": "String"
+    },
+    "location": {
+        "type": "String"
+    },
+    "dayTime": {
+        "type": "String"
+    },
+    "createdAt": {
+        "type": "Date"
+    },
+    "updatedAt": {
+        "type": "Date"
+    },
     "enrollment": {
-        "current": "Number",
-        "max": "Number"
+        "current": {
+            "type": "Number"
+        },
+        "max": {
+            "type": "Number"
+        }
     },
     "students": {
         "type": ["String"],
