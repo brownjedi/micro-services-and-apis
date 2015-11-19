@@ -1,5 +1,7 @@
 'use strict';
 
+const Course = require('./../models/course');
+
 function transformError(status, message) {
     return {
         type: "error",
@@ -22,8 +24,19 @@ function transformSchema(schema, name) {
     return output;
 }
 
-function courseDBToJSON(results) { // Need to ask (Syntax)
-    // convert to standard format as mentioned in TLDS
+function courseJSONToDB(result) {
+    let output = {};
+    let schema = Course.getSchema();
+
+    for (let key in Course.getSchema()) {
+        if (result.hasOwnProperty(key)) {
+            output[key] = result[key];
+        }
+    }
+    return output;
+}
+
+function courseDBToJSON(results) {
     let data = {};
 
     if (results instanceof Array) {
@@ -42,23 +55,26 @@ function courseDBToJSON(results) { // Need to ask (Syntax)
 
     function generateCourse(course) {
         if (course) {
-            return {
+            let output = {
                 type: "course",
                 courseID: course.courseID,
                 data: {
-                    name: course.name,
-                    instructor: course.instructor,
-                    location: course.location,
-                    dayTime: course.dayTime,
-                    enrollment: course.enrollment,
-                    students: course.students,
-                    version: course.version,
                     link: {
                         rel: "self",
                         href: `/api/v1/courses/${course.courseID}`
                     }
                 }
             };
+
+            for (let key in Course.getSchema()) {
+                if (course.hasOwnProperty(key)) {
+                    if (key !== 'courseID') {
+                        output.data[property] = course[property];
+                    }
+                }
+            }
+
+            return output;
         } else {
             return {};
         }
@@ -81,4 +97,5 @@ function eventGenerator(type, courseID, studentID, version) {
 module.exports.transformError = transformError;
 module.exports.transformSchema = transformSchema;
 module.exports.courseDBToJSON = courseDBToJSON;
+module.exports.courseJSONToDB = courseJSONToDB;
 module.exports.eventGenerator = eventGenerator;

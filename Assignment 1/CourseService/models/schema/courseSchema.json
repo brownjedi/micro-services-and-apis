@@ -21,20 +21,11 @@
     "updatedAt": {
         "type": "Date"
     },
-    "enrollment": {
-        "current": {
-            "type": "Number"
-        },
-        "max": {
-            "type": "Number"
-        }
-    },
     "students": {
         "type": ["String"],
         "default": []
     },
     "version": {
-        "type": "String",
-        "required": true
+        "type": "String"
     }
 }

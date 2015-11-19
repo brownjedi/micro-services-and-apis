@@ -27,7 +27,7 @@ function getSchemaFilePath () {
 }
 
 function getMandatoryFields() {
-    return ['courseID', 'name', 'createdAt', 'updatedAt', 'version'];
+    return ['courseID', 'name', 'createdAt', 'updatedAt', 'version', 'link'];
 }
 
 function getValidFieldTypes() {
@@ -63,4 +63,6 @@ function refreshSchema() {
 module.exports.getInstance = getInstance;
 module.exports.getSchemaFilePath = getSchemaFilePath;
 module.exports.refreshSchema = refreshSchema;
+module.exports.getValidFieldTypes = getValidFieldTypes;
+module.exports.getMandatoryFields = getMandatoryFields;
 module.exports.getSchema = getSchema;
