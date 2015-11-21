@@ -8,10 +8,9 @@ const mongoose = require('mongoose');
 const courseRoutes = require('./routes/courseRoutes');
 const schemaRoutes = require('./routes/schemaRoutes');
 const eventCallbackRoutes = require('./routes/eventCallbackRoutes');
-const util = require('./utilities/util');
 
 // Set the MongoDB connection
-mongoose.connect(process.env.mongoDBURL || require('./config/databaseUrl.json').url);
+mongoose.connect(process.env.mongoDBURL || require('./config/database').url);
 mongoose.set('debug', true);
 
 let app = express();
@@ -30,7 +29,7 @@ app.use('/api/v1/courses/eventCallback', eventCallbackRoutes);
 
 // catch 404 and forward it to error handler
 app.use((req, res, next) => {
-    let err = new Error('404: URL Not Found');
+    let err = new Error('404: Not Found');
     err.status = 404;
     next(err);
 });
@@ -38,7 +37,7 @@ app.use((req, res, next) => {
 // Error Handler
 app.use((err, req, res, next) => {
     res.status(err.status || 500);
-    return res.json(util.generateErrorJSON(err.status, err.message));
+    return res.json(err.message); // can customize it
 });
 
 // Start the server and listen to the port specified

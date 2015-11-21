@@ -1,0 +1,30 @@
+{
+  "name": "course-service",
+  "version": "0.0.1",
+  "description": "A micro service which handles all the CRUD operations on the Course Resource",
+  "scripts": {
+    "start": "node server.js",
+    "serve": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "private": true,
+  "author": "Rama Kompella <rk2797@columbia.edu>",
+  "contributors": [
+    "Sai Karthik Reddy Ginni <sg3205@columbia.edu>",
+    "Sahana Subbanna <ss4737@columbia.edu>",
+    "Sanjana Gopisetty <ssg2147@columbia.edu>",
+    "Meril Dsouza <msd2178@columbia.edu>"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": "~4.2.1"
+  },
+  "dependencies": {
+    "async": "^1.4.2",
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3",
+    "mongoose": "^4.2.3",
+    "morgan": "^1.6.1",
+    "superagent": "^1.4.0"
+  }
+}

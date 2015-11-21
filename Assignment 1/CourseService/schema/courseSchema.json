@@ -1,0 +1,45 @@
+{
+    "name": "course",
+    "modelIdentifier": "course",
+    "modelHistoryIdentifier": "courseHistory",
+    "version": "v1",
+    "schema": {
+        "createdAt": {
+            "type": "Date",
+            "hidden": true,
+            "required": false,
+            "systemLevel": true
+        },
+        "updatedAt": {
+            "type": "Date",
+            "hidden": true,
+            "required": false,
+            "systemLevel": true
+        },
+        "version": {
+            "type": "String",
+            "hidden": true,
+            "required": false,
+            "systemLevel": true
+        },
+        "courseID": {
+            "type": "Number",
+            "required": true,
+            "systemLevel": true
+        },
+        "name": {
+            "type": "String",
+            "required": true,
+            "systemLevel": true
+        },
+        "students": {
+            "type": ["String"],
+            "required": false,
+            "systemLevel": true
+        },
+        "instructor": {
+            "type": "String",
+            "required": false
+        }
+    }
+}
