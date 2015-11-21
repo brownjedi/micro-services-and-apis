@@ -37,7 +37,7 @@ router.post('/fields/:name', (req, res) => {
         if (err) {
             return res.status(util.schemaErrorToHTTP(err.status)).json(util.generateErrorJSON(util.schemaErrorToHTTP(err.status), err.message));
         }
-        return res.status(201).json(data.schema[req.params.name]);
+        return res.status(201).json(data);
     });
 });
 
@@ -46,7 +46,7 @@ router.put('/fields/:name', (req, res) => {
         if (err) {
             return res.status(util.schemaErrorToHTTP(err.status)).json(util.generateErrorJSON(util.schemaErrorToHTTP(err.status), err.message));
         }
-        return res.status(200).json(data.schema[req.params.name]);
+        return res.status(200).json(data);
     });
 });
 

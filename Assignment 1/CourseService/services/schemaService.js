@@ -2,7 +2,7 @@
 
 const path = require('path');
 const fs = require('fs');
-const schemaPath = path.join(__dirname,'./../schema/courseSchema.json');
+const schemaPath = path.join(__dirname, './../schema/courseSchema.json');
 const Course = require('./../databaseModels/course')(schemaPath);
 const CourseHistory = require('./../databaseModels/courseHistory')(schemaPath);
 
@@ -25,9 +25,13 @@ function addField(fieldName, data, callback) {
         let sch = JSON.parse(JSON.stringify(schemaJson));
         sch.schema[fieldName] = {};
         sch.schema[fieldName].type = data.type;
-        sch.schema[fieldName].required = data.required.toString().toLowerCase() === 'true';
-        sch.schema[fieldName].hidden = data.hidden.toString().toLowerCase() === 'true';
-        return writeToSchemaFile(schemaPath, sch, callback);
+        if (data.hasOwnProperty('required')) {
+            sch.schema[fieldName].required = data.required.toString().toLowerCase() === 'true';
+        }
+        if (data.hasOwnProperty('hidden')) {
+            sch.schema[fieldName].hidden = data.hidden.toString().toLowerCase() === 'true';
+        }
+        return writeToSchemaFile(schemaPath, sch, callback, fieldName);
     }
 }
 
@@ -50,9 +54,13 @@ function updateField(fieldName, data, callback) {
         let sch = JSON.parse(JSON.stringify(schemaJson));
         sch.schema[fieldName] = {};
         sch.schema[fieldName].type = data.type;
-        sch.schema[fieldName].required = data.required.toString().toLowerCase() === 'true';
-        sch.schema[fieldName].hidden = data.hidden.toString().toLowerCase() === 'true';
-        return writeToSchemaFile(schemaPath, sch, callback);
+        if (data.hasOwnProperty('required')) {
+            sch.schema[fieldName].required = data.required.toString().toLowerCase() === 'true';
+        }
+        if (data.hasOwnProperty('hidden')) {
+            sch.schema[fieldName].hidden = data.hidden.toString().toLowerCase() === 'true';
+        }
+        return writeToSchemaFile(schemaPath, sch, callback, fieldName);
     } else {
         let err = new Error();
         err.status = 'SCHEMA_ERROR_RESOURCE_NOT_FOUND';
@@ -98,15 +106,21 @@ function getSchema(callback) {
     return callback(null, schemaJson);
 }
 
-function writeToSchemaFile(path, data, callback) {
+function writeToSchemaFile(path, data, callback, fieldName) {
     fs.writeFile(path, JSON.stringify(data), (err) => {
         if (err) {
             return callback(err);
         }
         Course.refreshModel();
         CourseHistory.refreshModel();
+        // Doing this to remove the schema from require cache
+        delete require.cache[require.resolve(path)];
         schemaJson = require(path);
-        return callback(null, schemaJson);
+        if (fieldName) {
+            return callback(null, schemaJson.schema[fieldName]);
+        } else {
+            return callback(null, schemaJson);
+        }
     });
 }
 
@@ -134,7 +148,7 @@ function validateFieldType(data) {
         err.status = 'SCHEMA_ERROR_BAD_INPUT_REQUEST';
         err.message = 'The field "type" should have the one of the possible values "String", "Number", "Date", "Boolean", ["String"], ["Number"], ["Date"], ["Boolean"]';
         return err;
-    } else if (validFieldTypes.indexOf(data.type) === -1) {
+    } else if (data.type.constructor !== Array && validFieldTypes.indexOf(data.type) === -1) {
         // check if the type present in the validTypes
         let err = new Error();
         err.status = 'SCHEMA_ERROR_BAD_INPUT_REQUEST';
