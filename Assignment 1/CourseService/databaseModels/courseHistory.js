@@ -16,10 +16,13 @@ module.exports = function(schemaFilePath) {
         // Doing this to remove the schema from require cache
         delete require.cache[require.resolve(schemaFilePath)];
         let schemaJson = require(schemaFilePath);
+
         removeModel(schemaJson.historyCollectionName);
+
         schema = new mongoose.Schema(schemaJson.schema, {
             collection: schemaJson.historyCollectionName
         });
+
         model = mongoose.model(schemaJson.historyCollectionName, schema);
     }
 

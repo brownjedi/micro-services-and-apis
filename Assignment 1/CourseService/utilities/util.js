@@ -2,7 +2,7 @@
 
 function generateErrorJSON(status, message) {
     return {
-        type: "error",
+        resourceType: "error",
         errors: [{
             version: "v1",
             status: status,
@@ -25,5 +25,52 @@ function schemaErrorToHTTP(errorStatus) {
     return errorMap[errorStatus] || 500;
 }
 
+function generateFieldJSON(fieldName, data) {
+    let output = {};
+    if (data && data.schema && data.schema[fieldName]) {
+        output.resourceType = 'field';
+        output.data = {
+            fieldName: fieldName,
+            type: data.schema[fieldName].type,
+            hidden: data.schema[fieldName].hidden || false,
+            required: data.schema[fieldName].required || false,
+            systemLevel: data.schema[fieldName].systemLevel || false
+        };
+        output.link = {
+            rel: 'self',
+            href: `/spi/v1/courses/schema/fields/${fieldName}`
+        };
+    }
+    return output;
+}
+
+function generateSchemaJSON(data) {
+
+    let output = {};
+    if (data && data.schema) {
+        output.resourceType = 'schema';
+        output.data = {};
+        output.data.schemaName = data.schemaName;
+        output.data.collectionName = data.collectionName;
+        output.data.historyCollectionName = data.historyCollectionName;
+        output.data.version = data.version;
+        output.data.fields = [];
+
+        for (let key in data.schema) {
+            if (data.schema.hasOwnProperty(key)) {
+                output.data.fields.push(generateFieldJSON(key, data));
+            }
+        }
+
+        output.link = {
+            rel: 'self',
+            href: `/spi/v1/courses/schema/fields`
+        };
+    }
+    return output;
+}
+
 module.exports.generateErrorJSON = generateErrorJSON;
+module.exports.generateSchemaJSON = generateSchemaJSON;
+module.exports.generateFieldJSON = generateFieldJSON;
 module.exports.schemaErrorToHTTP = schemaErrorToHTTP;

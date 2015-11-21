@@ -1,5 +1,5 @@
 {
-    "name": "course",
+    "schemaName": "course",
     "collectionName": "course",
     "historyCollectionName": "courseHistory",
     "version": "v1",

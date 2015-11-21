@@ -31,7 +31,7 @@ function addField(fieldName, data, callback) {
         if (data.hasOwnProperty('hidden')) {
             sch.schema[fieldName].hidden = data.hidden.toString().toLowerCase() === 'true';
         }
-        return writeToSchemaFile(schemaPath, sch, callback, fieldName);
+        return writeToSchemaFile(schemaPath, sch, callback);
     }
 }
 
@@ -60,7 +60,7 @@ function updateField(fieldName, data, callback) {
         if (data.hasOwnProperty('hidden')) {
             sch.schema[fieldName].hidden = data.hidden.toString().toLowerCase() === 'true';
         }
-        return writeToSchemaFile(schemaPath, sch, callback, fieldName);
+        return writeToSchemaFile(schemaPath, sch, callback);
     } else {
         let err = new Error();
         err.status = 'SCHEMA_ERROR_RESOURCE_NOT_FOUND';
@@ -70,7 +70,6 @@ function updateField(fieldName, data, callback) {
 }
 
 function deleteField(fieldName, callback) {
-
     if (schemaJson.schema[fieldName]) {
 
         if (schemaJson.schema[fieldName].systemLevel) {
@@ -93,7 +92,7 @@ function deleteField(fieldName, callback) {
 
 function getField(fieldName, callback) {
     if (schemaJson.schema[fieldName]) {
-        return callback(null, schemaJson.schema[fieldName]);
+        return callback(null, schemaJson);
     } else {
         let err = new Error();
         err.status = 'SCHEMA_ERROR_RESOURCE_NOT_FOUND';
@@ -106,7 +105,7 @@ function getSchema(callback) {
     return callback(null, schemaJson);
 }
 
-function writeToSchemaFile(path, data, callback, fieldName) {
+function writeToSchemaFile(path, data, callback) {
     fs.writeFile(path, JSON.stringify(data), (err) => {
         if (err) {
             return callback(err);
@@ -116,12 +115,13 @@ function writeToSchemaFile(path, data, callback, fieldName) {
         // Doing this to remove the schema from require cache
         delete require.cache[require.resolve(path)];
         schemaJson = require(path);
-        if (fieldName) {
-            return callback(null, schemaJson.schema[fieldName]);
-        } else {
-            return callback(null, schemaJson);
-        }
+        return callback(null, schemaJson);
     });
+}
+
+function refreshModels() {
+    Course.refreshModel();
+    CourseHistory.refreshModel();
 }
 
 function validateFieldType(data) {
@@ -133,7 +133,7 @@ function validateFieldType(data) {
         return err;
     }
 
-    // Check if user has given a systemLevel or a hidden field
+    // Check if user has set a systemLevel
     if (data.systemLevel) {
         let err = new Error();
         err.status = 'SCHEMA_ERROR_BAD_INPUT_REQUEST';
@@ -158,7 +158,8 @@ function validateFieldType(data) {
 }
 
 module.exports.addField = addField;
-module.exports.getSchema = getSchema;
-module.exports.getField = getField;
-module.exports.deleteField = deleteField;
 module.exports.updateField = updateField;
+module.exports.deleteField = deleteField;
+module.exports.getField = getField;
+module.exports.getSchema = getSchema;
+module.exports.refreshModels = refreshModels;

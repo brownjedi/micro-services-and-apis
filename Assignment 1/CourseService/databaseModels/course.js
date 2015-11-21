@@ -16,8 +16,9 @@ module.exports = function(schemaFilePath) {
         // Doing this to remove the schema from require cache
         delete require.cache[require.resolve(schemaFilePath)];
         let schemaJson = require(schemaFilePath);
+
         removeModel(schemaJson.collectionName);
-        console.log('From Course Model', schemaJson);
+
         schema = new mongoose.Schema(schemaJson.schema, {
             timestamps: {
                 createdAt: 'createdAt',
