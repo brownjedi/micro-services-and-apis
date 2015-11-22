@@ -1,7 +1,7 @@
 {
     "schemaName": "course",
-    "collectionName": "course",
-    "historyCollectionName": "courseHistory",
+    "collectionName": "courses",
+    "historyCollectionName": "coursehistories",
     "version": "v1",
     "schema": {
         "createdAt": {

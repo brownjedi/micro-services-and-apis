@@ -157,6 +157,9 @@ function validateFieldType(data) {
     }
 }
 
+module.exports.Course = Course;
+module.exports.CourseHistory = CourseHistory;
+
 module.exports.addField = addField;
 module.exports.updateField = updateField;
 module.exports.deleteField = deleteField;

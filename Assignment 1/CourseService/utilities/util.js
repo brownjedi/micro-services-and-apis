@@ -70,7 +70,31 @@ function generateSchemaJSON(data) {
     return output;
 }
 
+function resourceExists(data, callback) {
+    if (data) {
+        return callback(null, data);
+    } else {
+        let err = new Error();
+        err.status = 404;
+        err.message = 'The request resource is not found';
+        return callback(err);
+    }
+}
+
+function resourceDoesNotExists(data, callback) {
+    if (!data) {
+        return callback();
+    } else {
+        let err = new Error();
+        err.status = 409;
+        err.message = 'The request resource already exists';
+        return callback(err);
+    }
+}
+
 module.exports.generateErrorJSON = generateErrorJSON;
 module.exports.generateSchemaJSON = generateSchemaJSON;
 module.exports.generateFieldJSON = generateFieldJSON;
 module.exports.schemaErrorToHTTP = schemaErrorToHTTP;
+module.exports.resourceExists = resourceExists;
+module.exports.resourceDoesNotExists = resourceDoesNotExists;
