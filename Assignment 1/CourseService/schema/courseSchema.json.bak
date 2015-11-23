@@ -4,6 +4,29 @@
     "historyCollectionName": "coursehistories",
     "version": "v1",
     "schema": {
+        "courseID": {
+            "type": "Number",
+            "required": true,
+            "systemLevel": true
+        },
+        "name": {
+            "type": "String",
+            "required": true,
+            "systemLevel": true
+        },
+        "instructor": {
+            "type": "String",
+            "required": false
+        },
+        "location": {
+            "type": "String",
+            "required": false
+        },
+        "students": {
+            "type": ["String"],
+            "required": false,
+            "systemLevel": true
+        },
         "createdAt": {
             "type": "Date",
             "hidden": true,
@@ -18,32 +41,8 @@
         },
         "version": {
             "type": "String",
-            "hidden": true,
             "required": false,
             "systemLevel": true
-        },
-        "courseID": {
-            "type": "Number",
-            "required": true,
-            "systemLevel": true
-        },
-        "name": {
-            "type": "String",
-            "required": true,
-            "systemLevel": true
-        },
-        "students": {
-            "type": ["String"],
-            "required": false,
-            "systemLevel": true
-        },
-        "instructor": {
-            "type": "String",
-            "required": false
-        },
-        "location": {
-            "type": "String",
-            "required": false
         }
     }
 }

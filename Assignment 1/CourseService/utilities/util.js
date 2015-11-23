@@ -1,5 +1,7 @@
 'use strict';
 
+const schemaService = require('./../services/schemaService');
+
 function generateErrorJSON(status, message) {
     return {
         resourceType: "error",
@@ -11,7 +13,7 @@ function generateErrorJSON(status, message) {
     };
 }
 
-function schemaErrorToHTTP(errorStatus) {
+function customErrorToHTTP(errorStatus) {
     let errorMap = {
         'SCHEMA_ERROR_RESOURCE_NOT_FOUND': 404,
         'SCHEMA_ERROR_INTERAL_ERROR': 500,
@@ -19,7 +21,13 @@ function schemaErrorToHTTP(errorStatus) {
         'SCHEMA_ERROR_UNAUTHORIZED': 401,
         'SCHEMA_ERROR_VALIDATION_CHECK_FAILED': 400,
         'SCHEMA_ERROR_BAD_INPUT_REQUEST': 400,
-        'SCHEMA_ERROR_FORBIDDEN': 403
+        'SCHEMA_ERROR_FORBIDDEN': 403,
+        'DB_ERROR_RESOURCE_NOT_FOUND': 404,
+        'DB_ERROR_BAD_INPUT_REQUEST': 400
+    }
+
+    if(!isNaN(errorStatus)) {
+        return errorStatus;
     }
 
     return errorMap[errorStatus] || 500;
@@ -70,31 +78,68 @@ function generateSchemaJSON(data) {
     return output;
 }
 
-function resourceExists(data, callback) {
-    if (data) {
-        return callback(null, data);
-    } else {
-        let err = new Error();
-        err.status = 404;
-        err.message = 'The request resource is not found';
-        return callback(err);
-    }
-}
+function generateCourseJSON(results, callback) {
 
-function resourceDoesNotExists(data, callback) {
-    if (!data) {
-        return callback();
-    } else {
-        let err = new Error();
-        err.status = 409;
-        err.message = 'The request resource already exists';
-        return callback(err);
+    function generateCourse(course, schemaJson) {
+        if (course) {
+            let output = {
+                type: "course",
+                courseID: course.courseID,
+                version: course.version,
+                data: {}
+            };
+
+            for (let key in schemaJson.schema) {
+                if (schemaJson.schema.hasOwnProperty(key)) {
+                    let isHidden = schemaJson.schema[key].hidden || false;
+
+                    if (isHidden) {
+                        continue;
+                    }
+
+                    if (key !== 'courseID' && key !== 'version') {
+                        output.data[key] = course[key];
+                    }
+                }
+            }
+
+            output.link = {
+                rel: "self",
+                href: `/api/v1/courses/${course.courseID}`
+            }
+
+            return output;
+        } else {
+            return {};
+        }
     }
+
+    schemaService.getSchema((err, schemaJson) => {
+        if (err) {
+            return callback(err);
+        }
+        let data = {};
+        if (results.constructor === Array) {
+            data = {
+                type: "courses",
+                "courses": []
+            }
+            results.forEach((result) => {
+                data.courses.push(generateCourse(result, schemaJson));
+            });
+            data.link = {
+                rel: "self",
+                href: `/api/v1/courses`
+            }
+        } else {
+            data = generateCourse(results, schemaJson);
+        }
+        return callback(null, data);
+    });
 }
 
 module.exports.generateErrorJSON = generateErrorJSON;
+module.exports.customErrorToHTTP = customErrorToHTTP;
 module.exports.generateSchemaJSON = generateSchemaJSON;
 module.exports.generateFieldJSON = generateFieldJSON;
-module.exports.schemaErrorToHTTP = schemaErrorToHTTP;
-module.exports.resourceExists = resourceExists;
-module.exports.resourceDoesNotExists = resourceDoesNotExists;
+module.exports.generateCourseJSON = generateCourseJSON;

@@ -8,7 +8,7 @@ const util = require('./../utilities/util');
 router.get('/fields', (req, res) => {
     schemaService.getSchema((err, data) => {
         if (err) {
-            return res.status(util.schemaErrorToHTTP(err.status)).json(util.generateErrorJSON(util.schemaErrorToHTTP(err.status), err.message));
+            return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
         return res.status(200).json(util.generateSchemaJSON(data));
     });
@@ -17,7 +17,7 @@ router.get('/fields', (req, res) => {
 router.get('/fields/:name', (req, res) => {
     schemaService.getField(req.params.name, (err, data) => {
         if (err) {
-            return res.status(util.schemaErrorToHTTP(err.status)).json(util.generateErrorJSON(util.schemaErrorToHTTP(err.status), err.message));
+            return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
         return res.status(200).json(util.generateFieldJSON(req.params.name, data));
     });
@@ -26,25 +26,33 @@ router.get('/fields/:name', (req, res) => {
 router.delete('/fields/:name', (req, res) => {
     schemaService.deleteField(req.params.name, (err, data) => {
         if (err) {
-            return res.status(util.schemaErrorToHTTP(err.status)).json(util.generateErrorJSON(util.schemaErrorToHTTP(err.status), err.message));
+            return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
         return res.status(204).end();
     });
 });
 
 router.post('/fields/:name', (req, res) => {
-    schemaService.addField(req.params.name, req.body.data, (err, data) => {
+    let data = undefined;
+    if (req.body && req.body.data) {
+        data = req.body.data;
+    }
+    schemaService.addField(req.params.name, data, (err, data) => {
         if (err) {
-            return res.status(util.schemaErrorToHTTP(err.status)).json(util.generateErrorJSON(util.schemaErrorToHTTP(err.status), err.message));
+            return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
         return res.status(201).json(util.generateFieldJSON(req.params.name, data));
     });
 });
 
 router.put('/fields/:name', (req, res) => {
-    schemaService.updateField(req.params.name, req.body.data, (err, data) => {
+    let data = undefined;
+    if (req.body && req.body.data) {
+        data = req.body.data;
+    }
+    schemaService.updateField(req.params.name, data, (err, data) => {
         if (err) {
-            return res.status(util.schemaErrorToHTTP(err.status)).json(util.generateErrorJSON(util.schemaErrorToHTTP(err.status), err.message));
+            return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
         return res.status(200).json(util.generateFieldJSON(req.params.name, data));
     });
