@@ -5,6 +5,7 @@ var express = require('express');
 var router = express.Router();
 var Handler = require('./../models/handler');
 var request = require('request');
+var url = require('url');
 
 // TODO: Make it more robust
 function matcher(url1, url2) {
@@ -29,6 +30,7 @@ function matcher(url1, url2) {
 
 router.all('*', function(req, res) {
     var query = req.originalUrl;
+    console.log(query, req.url, url.parse(req.url));
 
     if (query.charAt(0) == "/")
         query = query.substring(1, query.length);
