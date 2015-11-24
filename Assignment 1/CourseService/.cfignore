@@ -1,3 +1,4 @@
 node_modules/
 config/databaseUrl.json
 npm-debug.log
+.idea/

@@ -1,0 +1,48 @@
+{
+    "schemaName": "student",
+    "collectionName": "students",
+    "historyCollectionName": "studenthistories",
+    "version": "v1",
+    "schema": {
+        "studentID": {
+            "type": "Number",
+            "required": true,
+            "systemLevel": true
+        },
+        "name": {
+            "type": "String",
+            "required": true,
+            "systemLevel": true
+        },
+        "degree": {
+            "type": "String",
+            "required": false
+        },
+        "major": {
+            "type": "String",
+            "required": false
+        },
+        "courses": {
+            "type": ["String"],
+            "required": false,
+            "systemLevel": true
+        },
+        "createdAt": {
+            "type": "Date",
+            "hidden": true,
+            "required": false,
+            "systemLevel": true
+        },
+        "updatedAt": {
+            "type": "Date",
+            "hidden": true,
+            "required": false,
+            "systemLevel": true
+        },
+        "version": {
+            "type": "String",
+            "required": false,
+            "systemLevel": true
+        }
+    }
+}
