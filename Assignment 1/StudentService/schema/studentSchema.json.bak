@@ -5,7 +5,7 @@
     "version": "v1",
     "schema": {
         "studentID": {
-            "type": "Number",
+            "type": "String",
             "required": true,
             "systemLevel": true
         },
