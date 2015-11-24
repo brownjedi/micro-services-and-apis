@@ -1,0 +1,31 @@
+{
+    "courseID": {
+        "type": "Number"
+    },
+    "name": {
+        "type": "String",
+        "required": true
+    },
+    "instructor": {
+        "type": "String"
+    },
+    "location": {
+        "type": "String"
+    },
+    "dayTime": {
+        "type": "String"
+    },
+    "createdAt": {
+        "type": "Date"
+    },
+    "updatedAt": {
+        "type": "Date"
+    },
+    "students": {
+        "type": ["String"],
+        "default": []
+    },
+    "version": {
+        "type": "String"
+    }
+}

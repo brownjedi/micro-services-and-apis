@@ -1,0 +1,48 @@
+{
+    "schemaName": "course",
+    "collectionName": "courses",
+    "historyCollectionName": "coursehistories",
+    "version": "v1",
+    "schema": {
+        "courseID": {
+            "type": "Number",
+            "required": true,
+            "systemLevel": true
+        },
+        "name": {
+            "type": "String",
+            "required": true,
+            "systemLevel": true
+        },
+        "instructor": {
+            "type": "String",
+            "required": false
+        },
+        "location": {
+            "type": "String",
+            "required": false
+        },
+        "students": {
+            "type": ["String"],
+            "required": false,
+            "systemLevel": true
+        },
+        "createdAt": {
+            "type": "Date",
+            "hidden": true,
+            "required": false,
+            "systemLevel": true
+        },
+        "updatedAt": {
+            "type": "Date",
+            "hidden": true,
+            "required": false,
+            "systemLevel": true
+        },
+        "version": {
+            "type": "String",
+            "required": false,
+            "systemLevel": true
+        }
+    }
+}

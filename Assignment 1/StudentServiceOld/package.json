@@ -10,9 +10,9 @@
   "private": true,
   "author": "Sanjana Gopisetty <ssg2147@columbia.edu>",
   "contributors": [
-    "Sai Karthik Reddy Ginni <sg3205@columbia.edu>",
-    "Sahana Subbanna <ss4737@columbia.edu>",
     "Rama Kompella <rk2797@columbia.edu>",
+    "Sahana Subbanna <ss4737@columbia.edu>",
+    "Sai Karthik Reddy Ginni <sg3205@columbia.edu>",
     "Meril Dsouza <msd2178@columbia.edu>"
   ],
   "license": "MIT",
@@ -20,10 +20,10 @@
     "node": "~4.2.1"
   },
   "dependencies": {
-    "async": "^1.5.0",
+    "async": "^1.4.2",
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
-    "mongoose": "^4.2.3",
+    "mongoose": "^4.1.11",
     "morgan": "^1.6.1",
     "superagent": "^1.4.0"
   }

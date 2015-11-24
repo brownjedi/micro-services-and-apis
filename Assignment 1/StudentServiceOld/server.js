@@ -5,13 +5,13 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const courseRoutes = require('./routes/courseRoutes');
+const studentRoutes = require('./routes/studentRoutes');
 const schemaRoutes = require('./routes/schemaRoutes');
+const dataFormatConverter = require('./utilities/converter');
 const eventCallbackRoutes = require('./routes/eventCallbackRoutes');
-const util = require('./utilities/util');
 
 // Set the MongoDB connection
-mongoose.connect(process.env.mongoDBURL || require('./config/databaseUrl.json').url);
+mongoose.connect(process.env.mongoDBURL || require('./config/database').url);
 mongoose.set('debug', true);
 
 let app = express();
@@ -23,14 +23,14 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-// setting all the routes and schema changes required
-app.use('/api/v1/courses', courseRoutes);
-app.use('/spi/v1/schema', schemaRoutes);
-app.use('/api/v1/eventCallback', eventCallbackRoutes);
+// setting all the routes
+app.use('/api/v1/students',studentRoutes);
+app.use('/spi/v1/students/schema', schemaRoutes);
+app.use('/api/v1/students/eventCallback', eventCallbackRoutes);
 
 // catch 404 and forward it to error handler
 app.use((req, res, next) => {
-    let err = new Error('404: URL Not Found');
+    let err = new Error('404: Not Found');
     err.status = 404;
     next(err);
 });
@@ -38,10 +38,11 @@ app.use((req, res, next) => {
 // Error Handler
 app.use((err, req, res, next) => {
     res.status(err.status || 500);
-    return res.json(util.generateErrorJSON(err.status, err.message));
+    return res.json(dataFormatConverter.transformError(err.status || 500, err.message));
 });
 
 // Start the server and listen to the port specified
 app.listen(app.get('port'), () => {
-    console.log(`Course Express Server started on port: ${app.get('port')}`);
+    console.log(`Student Express Server started on port: ${app.get('port')}`);
 });
+
