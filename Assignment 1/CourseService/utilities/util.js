@@ -46,7 +46,7 @@ function generateFieldJSON(fieldName, data) {
         };
         output.link = {
             rel: 'self',
-            href: `/spi/v1/courses/schema/fields/${fieldName}`
+            href: `/spi/v1/schema/fields/${fieldName}`
         };
     }
     return output;
@@ -72,7 +72,7 @@ function generateSchemaJSON(data) {
 
         output.link = {
             rel: 'self',
-            href: `/spi/v1/courses/schema/fields`
+            href: `/spi/v1/schema/fields`
         };
     }
     return output;
