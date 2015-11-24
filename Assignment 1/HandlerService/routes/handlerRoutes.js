@@ -6,6 +6,7 @@ var router = express.Router();
 var Handler = require('./../models/handler');
 var request = require('request');
 
+// TODO: Make it more robust
 function matcher(url1, url2) {
     var url1_parts = url1.split('/')
     var url2_parts = url2.split('/')
@@ -13,7 +14,7 @@ function matcher(url1, url2) {
     if (url1_parts.length != url2_parts.length)
         return null;
 
-    for (var i = 0; i < url1_parts.length; i++) {   	
+    for (var i = 0; i < url1_parts.length; i++) {
         if (url1_parts[i] == url2_parts[i])
             continue;
 
@@ -35,11 +36,9 @@ router.all('*', function(req, res) {
     if (query.charAt(query.length - 1) == "/")
         query = query.substring(0, query.length - 1);
 
-    console.log("1.", query);
-
     Handler.find({
         "httpMethod": req.method
-    }, function(err, results) { 
+    }, function(err, results) {
         if (err) {
             return res.status(500).send(err.message);
         }
@@ -47,26 +46,13 @@ router.all('*', function(req, res) {
 
         for (var i = 0; i < results.length; i++) {
             var id = matcher(results[i].templateUrl, query);
-            // console.log(id);
-//PROBLEM FOR POST IN COURSE request AS IT CHECKS "name.firstName" when it comes across a student tuple. 
-            if(req.method == "POST") {
-            	console.log(results[i]);
-            	var identifierAttribute = results[i].identifier; // "name.firstname"
-            	console.log("identifierAttribute: " + identifierAttribute);
-            	id = eval("req.body." + identifierAttribute);
-//check if request body has "itentifierAttribute" ?? else continue;
-            	console.log("firstname: " + id);
-            }
 
-            if (id != null) {
-                console.log("Booga", "Sanjana is super rich!!!", id);
+            if (id !== null) {
+                // TODO: currently only checking the first character....make it more generic
                 if (id.charAt(0).search(new RegExp(results[i].regex)) != -1) { //course regexp will be [a-z] in db
                     var newURL = results[i].targetUrl;
-                    if(req.method != "POST") {
-	                    var i = newURL.lastIndexOf(':');
-	                    newURL = newURL.substring(0, i) + id;
-                  	}
-                  	console.log("send req to this url: " + newURL, req.method, req.body, req.get('Content-Type'));
+                    newURL = newURL.substring(0, newURL.lastIndexOf(':')) + id;
+                    console.log("send req to this url: " + newURL, req.method, req.body, req.get('Content-Type'));
                     request({
                         url: newURL, //URL to hit
                         method: req.method, //Specify the method
