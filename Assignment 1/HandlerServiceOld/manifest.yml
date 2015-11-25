@@ -1,5 +1,5 @@
 applications:
-- name: ms-handler-service
+- name: handler-service
   path: .
   command: npm start
   memory: 128M

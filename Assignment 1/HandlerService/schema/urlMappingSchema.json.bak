@@ -1,0 +1,32 @@
+{
+    "schemaName": "URL Mapping",
+    "collectionName": "handlers",
+    "version": "v1",
+    "schema": {
+        "urlMappingID": {
+            "type": "String",
+            "required": true,
+            "systemLevel": true
+        },
+        "httpMethod": {
+            "type": "String",
+            "required": true,
+            "systemLevel": true
+        },
+        "templateUrl": {
+            "type": "String",
+            "required": true,
+            "systemLevel": true
+        },
+        "regex": {
+            "type": "String",
+            "required": true,
+            "systemLevel": true
+        },
+        "targetUrl": {
+            "type": "String",
+            "required": true,
+            "systemLevel": true
+        }
+    }
+}
