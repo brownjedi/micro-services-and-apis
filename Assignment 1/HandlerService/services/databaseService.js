@@ -3,6 +3,7 @@
 const async = require('async');
 const schemaService = require('./schemaService');
 const UrlMapping = schemaService.UrlMapping;
+const util = require('./../utilities/util');
 
 function findOne(query, callback) {
     UrlMapping.getModel().findOne(query).exec((error, urlMappingDoc) => {
@@ -135,13 +136,7 @@ function validateInput(id, data, callback) {
             return callback(generateBadRequestError(`Bad Request. The field httpMethod should be one of the following values. GET, PUT, POST, DELETE.`));
         }
 
-        if(data.templateUrl.charAt(0) === '/') {
-            data.templateUrl.splice(0, 1);
-        }
-
-        if(data.templateUrl.charAt(data.templateUrl.length - 1) === '/') {
-            data.templateUrl.splice(data.templateUrl.length - 1, 1);
-        }
+        data.templateUrl = util.removeAdditionalSlashes(data.templateUrl);
 
         temp.urlMappingID = id;
         delete temp.createdAt;

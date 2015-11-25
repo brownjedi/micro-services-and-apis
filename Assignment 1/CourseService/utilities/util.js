@@ -26,7 +26,7 @@ function customErrorToHTTP(errorStatus) {
         'DB_ERROR_BAD_INPUT_REQUEST': 400
     }
 
-    if(!isNaN(errorStatus)) {
+    if (!isNaN(errorStatus)) {
         return errorStatus;
     }
 
@@ -103,11 +103,6 @@ function generateCourseJSON(results, callback) {
                 }
             }
 
-            output.link = {
-                rel: "self",
-                href: `/api/v1/courses/${course.courseID}`
-            }
-
             return output;
         } else {
             return {};
@@ -133,6 +128,10 @@ function generateCourseJSON(results, callback) {
             }
         } else {
             data = generateCourse(results, schemaJson);
+            data.link = {
+                rel: "self",
+                href: `/api/v1/courses/${results.courseID}`
+            };
         }
         return callback(null, data);
     });

@@ -103,11 +103,6 @@ function generateStudentJSON(results, callback) {
                 }
             }
 
-            output.link = {
-                rel: "self",
-                href: `/api/v1/students/${student.studentID}`
-            }
-
             return output;
         } else {
             return {};
@@ -133,6 +128,10 @@ function generateStudentJSON(results, callback) {
             }
         } else {
             data = generateStudent(results, schemaJson);
+            data.link = {
+                rel: "self",
+                href: `/api/v1/students/${results.studentID}`
+            };
         }
         return callback(null, data);
     });

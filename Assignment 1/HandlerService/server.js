@@ -4,6 +4,8 @@
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+const xmlparser = require('express-xml-bodyparser');
+const EasyXml = require('easyxml');
 const mongoose = require('mongoose');
 const urlMappingRoutes = require('./routes/urlMappingRoutes');
 const schemaRoutes = require('./routes/schemaRoutes');
@@ -23,6 +25,31 @@ app.set('port', process.env.PORT || process.env.VCAP_APP_PORT || 3000);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(xmlparser());
+
+let serializer = new EasyXml({
+    singularizeChildren: true,
+    allowAttributes: true,
+    rootElement: 'response',
+    dateFormat: 'ISO',
+    indent: 2,
+    manifest: true
+});
+
+app.use(function (req, res, next) {
+    res.sendData = function (obj) {
+        if (req.accepts('json') || req.accepts('text/html')) {
+            res.header('Content-Type', 'application/json');
+            res.send(obj);
+        } else if (req.accepts('application/xml')) {
+            res.header('Content-Type', 'text/xml');
+            res.send(serializer.render(obj));
+        } else {
+            res.send(406);
+        }
+    };
+    next();
+});
 
 // setting all the routes and schema changes required
 app.use('/spi/v1/urlMappings', urlMappingRoutes);

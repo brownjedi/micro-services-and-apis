@@ -10,14 +10,14 @@ const util = require('./../utilities/util');
 router.get('/', (req, res) => {
     databaseService.find({}, (err, urlMappings) => {
         if (err) {
-            return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
+            return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
         if (urlMappings) {
             util.generateUrlMappingJSON(urlMappings, (err, result) => {
-                return res.status(200).json(result);
+                return res.status(200).sendData(result);
             });
         } else {
-            return res.status(404).json(util.generateErrorJSON(404, 'The request resource is not found'));
+            return res.status(404).sendData(util.generateErrorJSON(404, 'The request resource is not found'));
         }
     });
 });
@@ -25,14 +25,14 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
     databaseService.findOneById(req.params.id, (err, urlMapping) => {
         if (err) {
-            return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
+            return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
         if (urlMapping) {
             util.generateUrlMappingJSON(urlMapping, (err, result) => {
-                return res.status(200).json(result);
+                return res.status(200).sendData(result);
             });
         } else {
-            return res.status(404).json(util.generateErrorJSON(404, 'The request resource is not found'));
+            return res.status(404).sendData(util.generateErrorJSON(404, 'The request resource is not found'));
         }
     });
 });
@@ -59,14 +59,14 @@ router.post('/:id', (req, res) => {
         }
     ], (err, urlMapping) => {
         if (err) {
-            return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
+            return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
         if (urlMapping) {
             util.generateUrlMappingJSON(urlMapping, (err, result) => {
-                return res.status(200).json(result);
+                return res.status(200).sendData(result);
             });
         } else {
-            return res.status(404).json(util.generateErrorJSON(404, 'The request resource is not found'));
+            return res.status(404).sendData(util.generateErrorJSON(404, 'The request resource is not found'));
         }
     });
 });
@@ -93,14 +93,14 @@ router.put('/:id', (req, res) => {
         }
     ], (err, urlMapping) => {
         if (err) {
-            return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
+            return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
         if (urlMapping) {
             util.generateUrlMappingJSON(urlMapping, (err, result) => {
-                return res.status(200).json(result);
+                return res.status(200).sendData(result);
             });
         } else {
-            return res.status(404).json(util.generateErrorJSON(404, 'The request resource is not found'));
+            return res.status(404).sendData(util.generateErrorJSON(404, 'The request resource is not found'));
         }
     });
 });
@@ -120,7 +120,7 @@ router.delete('/:id', (req, res) => {
         }
     ], (err) => {
         if (err) {
-            return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
+            return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
         return res.status(204).end();
     });

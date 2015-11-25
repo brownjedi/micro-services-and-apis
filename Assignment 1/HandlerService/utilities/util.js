@@ -82,7 +82,7 @@ function generateUrlMappingJSON(results, callback) {
     function generateUrlMapping(urlMapping, schemaJson) {
         if (urlMapping) {
             let output = {
-                type: "urlMapping",
+                resourceType: "urlMapping",
                 urlMappingID: urlMapping.urlMappingID,
                 version: urlMapping.version,
                 data: {}
@@ -120,7 +120,7 @@ function generateUrlMappingJSON(results, callback) {
         let data = {};
         if (results.constructor === Array) {
             data = {
-                type: "urlMappings",
+                resourceType: "urlMappings",
                 "urlMappings": []
             };
             results.forEach((result) => {
@@ -137,8 +137,25 @@ function generateUrlMappingJSON(results, callback) {
     });
 }
 
+
+function removeAdditionalSlashes(data) {
+
+    let temp = data;
+
+    if(temp.charAt(0) === '/') {
+        temp = temp.substring(1, temp.length);
+    }
+
+    if(temp.charAt(temp.length - 1) === '/') {
+        temp = temp.substring(0, temp.length - 1);
+    }
+
+    return temp;
+}
+
 module.exports.generateErrorJSON = generateErrorJSON;
 module.exports.customErrorToHTTP = customErrorToHTTP;
 module.exports.generateSchemaJSON = generateSchemaJSON;
 module.exports.generateFieldJSON = generateFieldJSON;
 module.exports.generateUrlMappingJSON = generateUrlMappingJSON;
+module.exports.removeAdditionalSlashes = removeAdditionalSlashes;

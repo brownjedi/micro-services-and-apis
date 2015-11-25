@@ -10,7 +10,7 @@ router.get('/fields', (req, res) => {
         if (err) {
             return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
-        return res.status(200).json(util.generateSchemaJSON(data));
+        return res.status(200).sendData(util.generateSchemaJSON(data));
     });
 });
 
@@ -19,7 +19,7 @@ router.get('/fields/:name', (req, res) => {
         if (err) {
             return res.status(util.customErrorToHTTP(err.status)).json(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
-        return res.status(200).json(util.generateFieldJSON(req.params.name, data));
+        return res.status(200).sendData(util.generateFieldJSON(req.params.name, data));
     });
 });
 
