@@ -102,10 +102,11 @@ router.all('*', (req, res) => {
                     }
                 }, (error, response) => {
                     if (error) {
+                        errorArray.push(error);
                         return next();
                     }
 
-                    if (response.statusCode < 300) {
+                    if (response.statusCode < 400) {
                         return next(null, response.body);
                     } else {
                         return next();
