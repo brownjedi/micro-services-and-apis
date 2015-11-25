@@ -83,7 +83,7 @@ function generateStudentJSON(results, callback) {
     function generateStudent(student, schemaJson) {
         if (student) {
             let output = {
-                type: "student",
+                resourceType: "student",
                 studentID: student.studentID,
                 version: student.version,
                 data: {}
@@ -116,7 +116,7 @@ function generateStudentJSON(results, callback) {
         let data = {};
         if (results.constructor === Array) {
             data = {
-                type: "students",
+                resourceType: "students",
                 "students": []
             }
             results.forEach((result) => {

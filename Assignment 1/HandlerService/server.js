@@ -43,6 +43,7 @@ app.use(function (req, res, next) {
             res.send(obj);
         } else if (req.accepts('application/xml')) {
             res.header('Content-Type', 'text/xml');
+            obj = JSON.parse(JSON.stringify(obj));
             res.send(serializer.render(obj));
         } else {
             res.send(406);
