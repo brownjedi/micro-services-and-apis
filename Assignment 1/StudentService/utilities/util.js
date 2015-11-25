@@ -1,6 +1,7 @@
 'use strict';
 
 const schemaService = require('./../services/schemaService');
+const basicAuth = require('basic-auth');
 
 function generateErrorJSON(status, message) {
     return {
@@ -137,6 +138,26 @@ function generateStudentJSON(results, callback) {
     });
 }
 
+function auth(req, res, next) {
+    function unauthorized(res) {
+        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+        return res.status(401).sendData(generateErrorJSON(401, 'User is not authorized'));
+    }
+
+    let user = basicAuth(req);
+
+    if (!user || !user.name || !user.pass) {
+        return unauthorized(res);
+    }
+
+    if (user.name === 'developer' && user.pass === 'awesome') {
+        return next();
+    } else {
+        return unauthorized(res);
+    }
+}
+
+module.exports.auth = auth;
 module.exports.generateErrorJSON = generateErrorJSON;
 module.exports.customErrorToHTTP = customErrorToHTTP;
 module.exports.generateSchemaJSON = generateSchemaJSON;

@@ -24,6 +24,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
+    console.log(req.params.id);
     databaseService.findOneById(req.params.id, (err, student) => {
         if (err) {
             return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));

@@ -1,6 +1,8 @@
 'use strict';
 
 const schemaService = require('./../services/schemaService');
+const _ = require('lodash');
+const basicAuth = require('basic-auth');
 
 function generateErrorJSON(status, message) {
     return {
@@ -26,7 +28,7 @@ function customErrorToHTTP(errorStatus) {
         'DB_ERROR_BAD_INPUT_REQUEST': 400
     };
 
-    if(!isNaN(errorStatus)) {
+    if (!isNaN(errorStatus)) {
         return errorStatus;
     }
 
@@ -142,20 +144,70 @@ function removeAdditionalSlashes(data) {
 
     let temp = data;
 
-    if(temp.charAt(0) === '/') {
+    if (temp.charAt(0) === '/') {
         temp = temp.substring(1, temp.length);
     }
 
-    if(temp.charAt(temp.length - 1) === '/') {
+    if (temp.charAt(temp.length - 1) === '/') {
         temp = temp.substring(0, temp.length - 1);
     }
 
     return temp;
 }
 
+function generateMergedUrlRoutingResult(originalUrl, result) {
+    let temp = [];
+
+    for (let i = 0; i < result.length; i++) {
+        if (result[i] !== null && result[i] !== undefined) {
+            temp.push(result[i]);
+        }
+    }
+
+    let finalResult = {};
+
+    for (let i = 0; i < temp.length; i++) {
+        finalResult = _.merge(finalResult, JSON.parse(temp[i]), function (a, b) {
+            if (_.isArray(a)) {
+                return a.concat(b);
+            }
+        });
+    }
+
+    if (finalResult && finalResult.link) {
+        finalResult.link = {
+            rel: 'self',
+            href: originalUrl
+        }
+    }
+
+    return finalResult;
+}
+
+function auth(req, res, next) {
+    function unauthorized(res) {
+        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+        return res.status(401).sendData(generateErrorJSON(401, 'User is not authorized'));
+    }
+
+    let user = basicAuth(req);
+
+    if (!user || !user.name || !user.pass) {
+        return unauthorized(res);
+    }
+
+    if (user.name === 'developer' && user.pass === 'awesome') {
+        return next();
+    } else {
+        return unauthorized(res);
+    }
+}
+
+module.exports.auth = auth;
 module.exports.generateErrorJSON = generateErrorJSON;
 module.exports.customErrorToHTTP = customErrorToHTTP;
 module.exports.generateSchemaJSON = generateSchemaJSON;
 module.exports.generateFieldJSON = generateFieldJSON;
 module.exports.generateUrlMappingJSON = generateUrlMappingJSON;
 module.exports.removeAdditionalSlashes = removeAdditionalSlashes;
+module.exports.generateMergedUrlRoutingResult = generateMergedUrlRoutingResult;

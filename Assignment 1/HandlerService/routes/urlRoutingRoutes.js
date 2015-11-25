@@ -5,7 +5,6 @@ const router = express.Router();
 const async = require('async');
 const url = require('url');
 const request = require('request');
-const _ = require('lodash');
 const databaseService = require('./../services/databaseService');
 const util = require('./../utilities/util');
 
@@ -54,6 +53,44 @@ function urlMatcher(inputUrl, templateUrl) {
     return output;
 }
 
+function getMatchedUrls(url, urlMappings) {
+
+    let matchedUrlMappings = [];
+
+    urlMappings.forEach((urlMapping) => {
+        let matcherObj = urlMatcher(url, urlMapping.templateUrl);
+
+        if (matcherObj.isMatch) {
+            let id;
+
+            for (let key in matcherObj.parameters) {
+                if (matcherObj.parameters.hasOwnProperty(key)) {
+                    id = matcherObj.parameters[key];
+                    break;
+                }
+            }
+
+            if (id) {
+                if (id.search(new RegExp(urlMapping.regex)) !== -1) {
+                    matchedUrlMappings.push({
+                        urlMapping: urlMapping,
+                        matcherObj: matcherObj
+                    });
+                }
+            } else {
+                matchedUrlMappings.push({
+                    urlMapping: urlMapping,
+                    matcherObj: matcherObj
+                });
+            }
+        }
+
+    });
+
+    return matchedUrlMappings;
+}
+
+
 router.all('*', (req, res) => {
 
     databaseService.find({
@@ -63,90 +100,53 @@ router.all('*', (req, res) => {
             return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
 
-        async.map(urlMappings, (urlMapping, next) => {
+        let matchedUrlMappings = getMatchedUrls(req.url, urlMappings);
 
-            let matcherObj = urlMatcher(req.url, urlMapping.templateUrl);
+        // Check if the URL is not matched to any templateURL
+        if (matchedUrlMappings.length === 0) {
+            return res.status(404).sendData(util.generateErrorJSON(404, '404: URL Not Found'));
+        }
 
-            if (matcherObj.isMatch) {
+        async.map(matchedUrlMappings, (item, next) => {
 
-                let id;
+            let url = item.urlMapping.targetUrl;
 
-                for (let key in matcherObj.parameters) {
-                    if (matcherObj.parameters.hasOwnProperty(key)) {
-                        id = matcherObj.parameters[key];
-                        break;
-                    }
+            for (let key in item.matcherObj.parameters) {
+                if (item.matcherObj.parameters.hasOwnProperty(key)) {
+                    url = url.replace(':' + key, item.matcherObj.parameters[key])
                 }
+            }
 
-                if (id && id.search(new RegExp(urlMapping.regex)) === -1) {
+            url = url + item.matcherObj.search;
+
+            console.log(url, req.method, req.body);
+
+            // Do the Request
+            request({
+                url: url,
+                method: req.method,
+                body: JSON.stringify(req.body),
+                headers: {
+                    'Content-Type': req.get('Content-Type')
+                }
+            }, (error, response) => {
+                if (error) {
                     return next();
                 }
-
-                let url = urlMapping.targetUrl;
-
-                for (let key in matcherObj.parameters) {
-                    if (matcherObj.parameters.hasOwnProperty(key)) {
-                        url = url.replace(':' + key, matcherObj.parameters[key])
-                    }
+                if (response.statusCode < 400) {
+                    return next(null, response.body);
+                } else {
+                    console.log(response.body);
+                    return next();
                 }
-
-                url = url + matcherObj.search;
-
-                console.log(url);
-                request({
-                    url: url,
-                    method: req.method,
-                    data: req.body,
-                    headers: {
-                        'Content-Type': req.get('Content-Type')
-                    }
-                }, (error, response) => {
-                    if (error) {
-                        errorArray.push(error);
-                        return next();
-                    }
-
-                    if (response.statusCode < 400) {
-                        return next(null, response.body);
-                    } else {
-                        return next();
-                    }
-                });
-            } else {
-                return next();
-            }
+            });
 
         }, (err, result) => {
             if (err) {
                 return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
             }
 
-            let temp = [];
-
-            for (let i = 0; i < result.length; i++) {
-                if (result[i] !== null && result[i] !== undefined) {
-                    temp.push(result[i]);
-                }
-            }
-
-            let finalResult = {};
-
-            for (let i = 0; i < temp.length; i++) {
-                finalResult = _.merge(finalResult, JSON.parse(temp[i]), function (a, b) {
-                    if (_.isArray(a)) {
-                        return a.concat(b);
-                    }
-                });
-            }
-
-            if(finalResult && finalResult.link) {
-                finalResult.link = {
-                    rel: 'self',
-                    href: req.originalUrl
-                }
-            }
-
-            return res.status(200).sendData(finalResult);
+            return res.status(200).sendData(util.generateMergedUrlRoutingResult(req.originalUrl, result));
         });
 
     });

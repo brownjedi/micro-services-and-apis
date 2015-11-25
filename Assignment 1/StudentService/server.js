@@ -24,18 +24,26 @@ app.set('port', process.env.PORT || process.env.VCAP_APP_PORT || 3000);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(xmlparser());
+
+var xml2jsDefaults = {
+    explicitArray: false,
+    normalize: false,
+    normalizeTags: false,
+    trim: true
+};
+
+app.use(xmlparser(xml2jsDefaults));
 
 let serializer = new EasyXml({
     singularizeChildren: true,
     allowAttributes: true,
-    rootElement: 'response',
+    rootElement: 'root',
     dateFormat: 'ISO',
     indent: 2,
     manifest: true
 });
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     res.sendData = function (obj) {
         if (req.accepts('json') || req.accepts('text/html')) {
             res.header('Content-Type', 'application/json');
@@ -45,10 +53,17 @@ app.use(function (req, res, next) {
             obj = JSON.parse(JSON.stringify(obj));
             res.send(serializer.render(obj));
         } else {
-            res.send(406);
+            res.send(util.generateErrorJSON(406, 'Not acceptable'));
         }
     };
     next();
+});
+
+app.use((req, res, next) => {
+    if (req.header('Content-Type') === 'text/xml' && req.body) {
+        req.body = req.body.root;
+        next();
+    }
 });
 
 // setting all the routes and schema changes required
@@ -64,9 +79,9 @@ app.use((req, res, next) => {
 });
 
 // Error Handler
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
     res.status(err.status || 500);
-    return res.json(util.generateErrorJSON(err.status, err.message));
+    return res.sendData(util.generateErrorJSON(err.status, err.message));
 });
 
 // Start the server and listen to the port specified
