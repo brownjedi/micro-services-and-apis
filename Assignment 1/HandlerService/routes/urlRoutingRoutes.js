@@ -137,13 +137,10 @@ router.all('*', (req, res) => {
             }
 
             internalRequest.end((error, response) => {
-                if (error) {
-                    console.log(response.statusCode, response.body);
-                    return next();
-                } else {
-                    console.log(response.statusCode, response.body);
-                    return next(null, response.body);
-                }
+                return next(null, {
+                    status: response.statusCode,
+                    body: response.body
+                });
             });
 
         }, (err, result) => {
@@ -151,7 +148,26 @@ router.all('*', (req, res) => {
                 return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
             }
 
-            return res.status(200).sendData(util.generateMergedUrlRoutingResult(req.originalUrl, result));
+            let successResponsePresent = false;
+            for(let i = 0; i < result.length; i++) {
+                if(result[i].status < 400) {
+                    successResponsePresent = true;
+                    break;
+                }
+            }
+
+            let temp = [];
+            if(successResponsePresent) {
+                for(let i = 0; i < result.length; i++) {
+                    if(result[i].status < 400) {
+                        temp.push(result[i]);
+                    }
+                }
+            } else {
+                temp = result;
+            }
+
+            return res.status(temp[0].status).sendData(util.generateMergedUrlRoutingResult(req.originalUrl, temp));
         });
 
     });

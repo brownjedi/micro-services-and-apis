@@ -156,18 +156,11 @@ function removeAdditionalSlashes(data) {
 }
 
 function generateMergedUrlRoutingResult(originalUrl, result) {
-    let temp = [];
-
-    for (let i = 0; i < result.length; i++) {
-        if (result[i] !== null && result[i] !== undefined) {
-            temp.push(result[i]);
-        }
-    }
 
     let finalResult = {};
 
-    for (let i = 0; i < temp.length; i++) {
-        finalResult = _.merge(finalResult, JSON.parse(JSON.stringify(temp[i])), function (a, b) {
+    for (let i = 0; i < result.length; i++) {
+        finalResult = _.merge(finalResult, JSON.parse(JSON.stringify(result[i].body)), function (a, b) {
             if (_.isArray(a)) {
                 return a.concat(b);
             }

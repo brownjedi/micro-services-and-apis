@@ -84,7 +84,7 @@ function generateCourseJSON(results, callback) {
     function generateCourse(course, schemaJson) {
         if (course) {
             let output = {
-                type: "course",
+                resourceType: "course",
                 courseID: course.courseID,
                 version: course.version,
                 data: {}
@@ -117,9 +117,9 @@ function generateCourseJSON(results, callback) {
         let data = {};
         if (results.constructor === Array) {
             data = {
-                type: "courses",
+                resourceType: "courses",
                 "courses": []
-            }
+            };
             results.forEach((result) => {
                 data.courses.push(generateCourse(result, schemaJson));
             });

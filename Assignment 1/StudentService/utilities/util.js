@@ -119,7 +119,7 @@ function generateStudentJSON(results, callback) {
             data = {
                 resourceType: "students",
                 "students": []
-            }
+            };
             results.forEach((result) => {
                 data.students.push(generateStudent(result, schemaJson));
             });
