@@ -60,10 +60,10 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-    if (req.header('Content-Type') === 'text/xml' && req.body) {
+    if ((req.header('Content-Type') === 'text/xml' || req.header('Content-Type') === 'application/xml') && req.body) {
         req.body = req.body.root;
-        next();
     }
+    next();
 });
 
 // setting all the routes and schema changes required

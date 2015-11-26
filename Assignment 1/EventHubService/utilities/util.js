@@ -1,7 +1,6 @@
 'use strict';
 
 const schemaService = require('./../services/schemaService');
-const _ = require('lodash');
 const basicAuth = require('basic-auth');
 
 function generateErrorJSON(status, message) {
@@ -79,14 +78,14 @@ function generateSchemaJSON(data) {
     return output;
 }
 
-function generateUrlMappingJSON(results, callback) {
+function generateSubscriptionJSON(results, callback) {
 
-    function generateUrlMapping(urlMapping, schemaJson) {
-        if (urlMapping) {
+    function generateSubscription(subscription, schemaJson) {
+        if (subscription) {
             let output = {
-                resourceType: "urlMapping",
-                urlMappingID: urlMapping.urlMappingID,
-                version: urlMapping.version,
+                resourceType: "subscription",
+                subscriptionID: subscription.subscriptionID,
+                version: subscription.version,
                 data: {}
             };
 
@@ -98,16 +97,11 @@ function generateUrlMappingJSON(results, callback) {
                         continue;
                     }
 
-                    if (key !== 'urlMappingID' && key !== 'version') {
-                        output.data[key] = urlMapping[key];
+                    if (key !== 'subscriptionID' && key !== 'version') {
+                        output.data[key] = subscription[key];
                     }
                 }
             }
-
-            output.link = {
-                rel: "self",
-                href: `/spi/v1/urlMappings/${urlMapping.urlMappingID}`
-            };
 
             return output;
         } else {
@@ -122,66 +116,25 @@ function generateUrlMappingJSON(results, callback) {
         let data = {};
         if (results.constructor === Array) {
             data = {
-                resourceType: "urlMappings",
-                "urlMappings": []
+                resourceType: "subscriptions",
+                "subscriptions": []
             };
             results.forEach((result) => {
-                data.urlMappings.push(generateUrlMapping(result, schemaJson));
+                data.subscriptions.push(generateSubscription(result, schemaJson));
             });
             data.link = {
                 rel: "self",
-                href: `/api/v1/urlMappings`
+                href: `/api/v1/subscriptions`
             }
         } else {
-            data = generateUrlMapping(results, schemaJson);
+            data = generateSubscription(results, schemaJson);
+            data.link = {
+                rel: "self",
+                href: `/api/v1/subscriptions/${results.subscriptionID}`
+            };
         }
         return callback(null, data);
     });
-}
-
-
-function removeAdditionalSlashes(data) {
-
-    let temp = data;
-
-    if (temp.charAt(0) === '/') {
-        temp = temp.substring(1, temp.length);
-    }
-
-    if (temp.charAt(temp.length - 1) === '/') {
-        temp = temp.substring(0, temp.length - 1);
-    }
-
-    return temp;
-}
-
-function generateMergedUrlRoutingResult(originalUrl, result) {
-    let temp = [];
-
-    for (let i = 0; i < result.length; i++) {
-        if (result[i] !== null && result[i] !== undefined) {
-            temp.push(result[i]);
-        }
-    }
-
-    let finalResult = {};
-
-    for (let i = 0; i < temp.length; i++) {
-        finalResult = _.merge(finalResult, JSON.parse(JSON.stringify(temp[i])), function (a, b) {
-            if (_.isArray(a)) {
-                return a.concat(b);
-            }
-        });
-    }
-
-    if (finalResult && finalResult.link) {
-        finalResult.link = {
-            rel: 'self',
-            href: originalUrl
-        }
-    }
-
-    return finalResult;
 }
 
 function auth(req, res, next) {
@@ -208,6 +161,4 @@ module.exports.generateErrorJSON = generateErrorJSON;
 module.exports.customErrorToHTTP = customErrorToHTTP;
 module.exports.generateSchemaJSON = generateSchemaJSON;
 module.exports.generateFieldJSON = generateFieldJSON;
-module.exports.generateUrlMappingJSON = generateUrlMappingJSON;
-module.exports.removeAdditionalSlashes = removeAdditionalSlashes;
-module.exports.generateMergedUrlRoutingResult = generateMergedUrlRoutingResult;
+module.exports.generateSubscriptionJSON = generateSubscriptionJSON;

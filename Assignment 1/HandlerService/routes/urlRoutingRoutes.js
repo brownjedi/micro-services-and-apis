@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const async = require('async');
 const url = require('url');
-const request = require('request');
+const request = require('superagent');
 const databaseService = require('./../services/databaseService');
 const util = require('./../utilities/util');
 
@@ -107,6 +107,8 @@ router.all('*', (req, res) => {
             return res.status(404).sendData(util.generateErrorJSON(404, '404: URL Not Found'));
         }
 
+        console.log(matchedUrlMappings);
+
         async.map(matchedUrlMappings, (item, next) => {
 
             let url = item.urlMapping.targetUrl;
@@ -119,25 +121,28 @@ router.all('*', (req, res) => {
 
             url = url + item.matcherObj.search;
 
-            console.log(url, req.method, req.body);
-
             // Do the Request
-            request({
-                url: url,
-                method: req.method,
-                body: JSON.stringify(req.body),
-                headers: {
-                    'Content-Type': req.get('Content-Type')
-                }
-            }, (error, response) => {
+            let headers = JSON.parse(JSON.stringify(req.headers));
+
+            // Delete Content Length....It's causing issues
+            delete headers['content-length'];
+            delete headers['host'];
+
+            console.log(headers);
+
+            let internalRequest = request(req.method, url).set(headers);
+
+            if (req.body && Object.keys(req.body).length > 0) {
+                internalRequest.send(req.body);
+            }
+
+            internalRequest.end((error, response) => {
                 if (error) {
+                    console.log(response.statusCode, response.body);
                     return next();
-                }
-                if (response.statusCode < 400) {
-                    return next(null, response.body);
                 } else {
-                    console.log(response.body);
-                    return next();
+                    console.log(response.statusCode, response.body);
+                    return next(null, response.body);
                 }
             });
 
