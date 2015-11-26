@@ -27,6 +27,22 @@
             "type": "String",
             "required": true,
             "systemLevel": true
+        }, "createdAt": {
+            "type": "Date",
+            "hidden": true,
+            "required": false,
+            "systemLevel": true
+        },
+        "updatedAt": {
+            "type": "Date",
+            "hidden": true,
+            "required": false,
+            "systemLevel": true
+        },
+        "version": {
+            "type": "String",
+            "required": false,
+            "systemLevel": true
         }
     }
 }

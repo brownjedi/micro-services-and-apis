@@ -4,7 +4,7 @@
     "version": "v1",
     "schema": {
         "urlMappingID": {
-            "type": "String",
+            "type": "Number",
             "required": true,
             "systemLevel": true
         },
@@ -26,6 +26,22 @@
         "targetUrl": {
             "type": "String",
             "required": true,
+            "systemLevel": true
+        }, "createdAt": {
+            "type": "Date",
+            "hidden": true,
+            "required": false,
+            "systemLevel": true
+        },
+        "updatedAt": {
+            "type": "Date",
+            "hidden": true,
+            "required": false,
+            "systemLevel": true
+        },
+        "version": {
+            "type": "String",
+            "required": false,
             "systemLevel": true
         }
     }

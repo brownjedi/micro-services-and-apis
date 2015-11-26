@@ -23,7 +23,7 @@
             "required": false
         },
         "courses": {
-            "type": ["String"],
+            "type": ["Number"],
             "required": false,
             "systemLevel": true
         },
