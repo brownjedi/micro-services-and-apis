@@ -79,7 +79,7 @@ app.use((req, res, next) => {
 });
 
 // Error Handler
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
     res.status(err.status || 500);
     return res.sendData(util.generateErrorJSON(err.status, err.message));
 });
