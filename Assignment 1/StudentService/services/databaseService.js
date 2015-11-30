@@ -81,6 +81,53 @@ function deleteStudent(id, callback) {
     });
 }
 
+function addCourseToStudent(id, courseID, callback) {
+    findOneById(id, (err, student) => {
+        if (err) {
+            return callback(err);
+        }
+
+        if (student) {
+            student.version = Date.now();
+            student.courses = student.courses || [];
+            student.courses.push(courseID);
+            student.save((error, studentDoc) => {
+                return callback(error, studentDoc);
+            });
+        } else {
+            let err = new Error();
+            err.status = 'DB_ERROR_RESOURCE_NOT_FOUND';
+            err.message = 'The request resource is not found';
+            return callback(err);
+        }
+    });
+}
+
+function removeCourseFromStudent(id, courseID, callback) {
+    findOneById(id, (err, student) => {
+        if (err) {
+            return callback(err);
+        }
+
+        if (student) {
+            student.version = Date.now();
+            student.courses = student.courses || [];
+            let index = student.courses.indexOf(courseID);
+            if (index > -1) {
+                student.courses.splice(index, 1);
+            }
+            student.save((error, studentDoc) => {
+                return callback(error, studentDoc);
+            });
+        } else {
+            let err = new Error();
+            err.status = 'DB_ERROR_RESOURCE_NOT_FOUND';
+            err.message = 'The request resource is not found';
+            return callback(err);
+        }
+    });
+}
+
 function updateStudent(id, data, callback) {
     async.parallel([
         schemaService.getSchema,
@@ -94,17 +141,6 @@ function updateStudent(id, data, callback) {
         let student = result[1];
 
         if (student) {
-
-            // if (student._doc) {
-            //     for (let key in student._doc) {
-            //         if (student._doc.hasOwnProperty(key)) {
-            //             if(key != '_id' && key != '__v') {
-            //                 console.log(student[key]);
-            //                 student[key] = undefined;
-            //             }
-            //         }
-            //     }
-            // }
 
             for (let key in schemaJson.schema) {
                 if (schemaJson.schema.hasOwnProperty(key)) {
@@ -252,3 +288,5 @@ module.exports.deleteStudent = deleteStudent;
 module.exports.validateInput = validateInput;
 module.exports.revertFromHistory = revertFromHistory;
 module.exports.saveHistory = saveHistory;
+module.exports.addCourseToStudent = addCourseToStudent;
+module.exports.removeCourseFromStudent = removeCourseFromStudent;

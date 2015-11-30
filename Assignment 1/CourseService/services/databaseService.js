@@ -95,17 +95,6 @@ function updateCourse(id, data, callback) {
 
         if (course) {
 
-            // if (course._doc) {
-            //     for (let key in course._doc) {
-            //         if (course._doc.hasOwnProperty(key)) {
-            //             if(key != '_id' && key != '__v') {
-            //                 console.log(course[key]);
-            //                 course[key] = undefined;
-            //             }
-            //         }
-            //     }
-            // }
-
             for (let key in schemaJson.schema) {
                 if (schemaJson.schema.hasOwnProperty(key)) {
                     course[key] = data[key];

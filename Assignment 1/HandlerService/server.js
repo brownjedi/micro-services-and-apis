@@ -45,20 +45,21 @@ let serializer = new EasyXml({
 });
 
 app.use((req, res, next) => {
-    res.sendData = function (obj) {
-        if (req.accepts('json') || req.accepts('text/html')) {
-            res.header('Content-Type', 'application/json');
-            res.send(obj);
-        } else if (req.accepts('application/xml')) {
-            res.header('Content-Type', 'text/xml');
-            obj = JSON.parse(JSON.stringify(obj));
-            res.send(serializer.render(obj));
-        } else {
-            res.send(util.generateErrorJSON(406, 'Not acceptable'));
-        }
-    };
-    next();
-});
+        res.sendData = function (obj) {
+            if (req.accepts('json') || req.accepts('text/html')) {
+                res.header('Content-Type', 'application/json');
+                res.send(obj);
+                //} else if (req.accepts('application/xml')) {
+                //res.header('Content-Type', 'application/xml');
+                //obj = JSON.parse(JSON.stringify(obj));
+                //res.send(serializer.render(obj));
+            } else {
+                res.send(util.generateErrorJSON(406, 'Not acceptable'));
+            }
+        };
+        next();
+    }
+);
 
 app.use((req, res, next) => {
     if ((req.header('Content-Type') === 'text/xml' || req.header('Content-Type') === 'application/xml') && req.body) {

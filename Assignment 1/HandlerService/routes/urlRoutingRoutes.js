@@ -139,7 +139,7 @@ router.all('*', (req, res) => {
             internalRequest.end((error, response) => {
                 return next(null, {
                     status: response.statusCode,
-                    body: response.body
+                    body: response.text
                 });
             });
 
@@ -147,6 +147,8 @@ router.all('*', (req, res) => {
             if (err) {
                 return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
             }
+
+            console.log('finalresult', result);
 
             let successResponsePresent = false;
             for(let i = 0; i < result.length; i++) {
