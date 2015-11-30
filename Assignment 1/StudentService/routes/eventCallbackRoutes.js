@@ -5,24 +5,25 @@ const router = express.Router();
 const databaseService = require('./../services/databaseService');
 const util = require('./../utilities/util');
 
-function handleCourseAddedToStudentError(event, callback) {
+function handleCourseAddedToStudentError(event, cb) {
     if (event.data && event.data.studentID && event.data.courseID) {
         async.waterfall([
-
-        ], (err, result) => {
-
-        });
+            async.apply(databaseService.findOne, event.data.studentID), 
+            (data, callback) => {
+                if (data && data.version && event.version === data.version) {
+                    databaseService.revertFromHistory(event.data.studentID, callback);
+                } else {
+                    return callback();
+                }
+            }
+        ], cb);
     } else {
-        return callback();
+        return cb();
     }
 }
 
-function handleCourseDeletedFromStudentError(event, callback) {
-    if (event.data && event.data.studentID && event.data.courseID) {
-
-    } else {
-        return callback();
-    }
+function handleCourseDeletedFromStudentError(event, cb) {
+    return cb();
 }
 
 function handleStudentAddedToCourse(event, callback) {
