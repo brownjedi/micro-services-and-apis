@@ -50,6 +50,7 @@ router.all('*', (req, res) => {
             // Delete Content Length....It's causing issues
             delete headers['content-length'];
             delete headers['host'];
+            headers.accept = 'application/json';
 
             console.log(headers);
 
@@ -70,6 +71,8 @@ router.all('*', (req, res) => {
             if (err) {
                 return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
             }
+
+            console.log('Result', result);
 
             let successResponsePresent = false;
             for (let i = 0; i < result.length; i++) {

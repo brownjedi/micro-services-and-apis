@@ -49,11 +49,12 @@ app.use((req, res, next) => {
             if (req.accepts('json') || req.accepts('text/html')) {
                 res.header('Content-Type', 'application/json');
                 res.send(obj);
-                //} else if (req.accepts('application/xml')) {
-                //res.header('Content-Type', 'application/xml');
-                //obj = JSON.parse(JSON.stringify(obj));
-                //res.send(serializer.render(obj));
-            } else {
+            } else if (req.accepts('application/xml')) {
+                res.header('Content-Type', 'application/xml');
+                obj = JSON.parse(JSON.stringify(obj));
+                res.send(serializer.render(obj));
+            }
+            else {
                 res.send(util.generateErrorJSON(406, 'Not acceptable'));
             }
         };

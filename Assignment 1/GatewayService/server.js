@@ -49,7 +49,7 @@ app.use((req, res, next) => {
             res.header('Content-Type', 'application/json');
             res.send(obj);
         } else if (req.accepts('application/xml')) {
-            res.header('Content-Type', 'text/xml');
+            res.header('Content-Type', 'application/xml');
             obj = JSON.parse(JSON.stringify(obj));
             res.send(serializer.render(obj));
         } else {
