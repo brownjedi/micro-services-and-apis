@@ -77,9 +77,6 @@ router.post('/', (req, res) => {
                 return next();
             }
         }, (err, results) => {
-            //if (err) {
-            //    return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
-            //}
         });
     }
 });
