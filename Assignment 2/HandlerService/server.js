@@ -9,7 +9,6 @@ const EasyXml = require('easyxml');
 const mongoose = require('mongoose');
 const urlMappingRoutes = require('./routes/urlMappingRoutes');
 const schemaRoutes = require('./routes/schemaRoutes');
-const eventCallbackRoutes = require('./routes/eventCallbackRoutes');
 const urlRoutingRoutes = require('./routes/urlRoutingRoutes');
 const util = require('./utilities/util');
 
@@ -45,22 +44,21 @@ let serializer = new EasyXml({
 });
 
 app.use((req, res, next) => {
-        res.sendData = function (obj) {
-            if (req.accepts('json') || req.accepts('text/html')) {
-                res.header('Content-Type', 'application/json');
-                res.send(obj);
-            } else if (req.accepts('application/xml')) {
-                res.header('Content-Type', 'application/xml');
-                obj = JSON.parse(JSON.stringify(obj));
-                res.send(serializer.render(obj));
-            }
-            else {
-                res.send(util.generateErrorJSON(406, 'Not acceptable'));
-            }
-        };
-        next();
-    }
-);
+    res.sendData = function (obj) {
+        if (req.accepts('json') || req.accepts('text/html')) {
+            res.header('Content-Type', 'application/json');
+            res.send(obj);
+        } else if (req.accepts('application/xml')) {
+            res.header('Content-Type', 'application/xml');
+            obj = JSON.parse(JSON.stringify(obj));
+            res.send(serializer.render(obj));
+        }
+        else {
+            res.send(util.generateErrorJSON(406, 'Not acceptable'));
+        }
+    };
+    next();
+});
 
 app.use((req, res, next) => {
     if ((req.header('Content-Type') === 'text/xml' || req.header('Content-Type') === 'application/xml') && req.body) {
@@ -72,7 +70,6 @@ app.use((req, res, next) => {
 // setting all the routes and schema changes required
 app.use('/spi/v1/urlMappings', urlMappingRoutes);
 app.use('/spi/v1/schema', schemaRoutes);
-app.use('/api/v1/eventCallback', eventCallbackRoutes);
 app.use('/api/v1/urlRouting', urlRoutingRoutes);
 
 // catch 404 and forward it to error handler
