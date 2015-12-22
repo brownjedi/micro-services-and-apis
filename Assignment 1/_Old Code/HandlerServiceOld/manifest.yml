@@ -1,7 +1,0 @@
-applications:
-- name: handler-service
-  path: .
-  command: npm start
-  memory: 128M
-  env:
-   NODE_ENV: production
