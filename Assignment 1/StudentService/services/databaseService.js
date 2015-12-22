@@ -66,7 +66,7 @@ function addStudent(data, callback) {
 
         temp.version = Date.now();
 
-        let student = new Student.getModel()(temp);
+        let student = new (Student.getModel())(temp);
         student.save((error, studentDoc) => {
             return callback(error, studentDoc);
         });
@@ -272,7 +272,7 @@ function saveHistory(id, callback) {
             }
         }
 
-        let studentHistory = new StudentHistory.getModel()(temp);
+        let studentHistory = new (StudentHistory.getModel())(temp);
         studentHistory.save((error, studentHistoryDoc) => {
             return callback(error, studentHistoryDoc);
         });

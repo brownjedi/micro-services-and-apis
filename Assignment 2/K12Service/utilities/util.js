@@ -79,14 +79,14 @@ function generateSchemaJSON(data) {
     return output;
 }
 
-function generateFinanceJSON(results, callback) {
+function generateK12JSON(results, callback) {
 
-    function generateFinance(finance, schemaJson) {
-        if (finance) {
+    function generateK12(k12Obj, schemaJson) {
+        if (k12Obj) {
             let output = {
-                resourceType: "finance",
-                financeID: finance.financeID,
-                version: finance.version,
+                resourceType: "k12",
+                studentID: k12Obj.studentID,
+                version: k12Obj.version,
                 data: {}
             };
 
@@ -98,8 +98,8 @@ function generateFinanceJSON(results, callback) {
                         continue;
                     }
 
-                    if (key !== 'financeID' && key !== 'version') {
-                        output.data[key] = finance[key];
+                    if (key !== 'studentID' && key !== 'version') {
+                        output.data[key] = k12Obj[key];
                     }
                 }
             }
@@ -117,21 +117,21 @@ function generateFinanceJSON(results, callback) {
         let data = {};
         if (results.constructor === Array) {
             data = {
-                resourceType: "finances",
-                "finances": []
+                resourceType: "k12 List",
+                "k12Array": []
             };
             results.forEach((result) => {
-                data.finances.push(generateFinance(result, schemaJson));
+                data.k12Array.push(generateK12(result, schemaJson));
             });
             data.link = {
                 rel: "self",
-                href: `/api/v1/finances`
+                href: `/api/v1/k12`
             }
         } else {
-            data = generateFinance(results, schemaJson);
+            data = generateK12(results, schemaJson);
             data.link = {
                 rel: "self",
-                href: `/api/v1/finances/${results.financeID}`
+                href: `/api/v1/k12/${results.studentID}`
             };
         }
         return callback(null, data);
@@ -162,4 +162,4 @@ module.exports.generateErrorJSON = generateErrorJSON;
 module.exports.customErrorToHTTP = customErrorToHTTP;
 module.exports.generateSchemaJSON = generateSchemaJSON;
 module.exports.generateFieldJSON = generateFieldJSON;
-module.exports.generateFinanceJSON = generateFinanceJSON;
+module.exports.generateK12JSON = generateK12JSON;

@@ -4,17 +4,16 @@ const express = require('express');
 const router = express.Router();
 const async = require('async');
 const databaseService = require('./../services/databaseService');
-const eventService = require('./../services/eventService');
 const util = require('./../utilities/util');
 
 
 router.get('/', (req, res) => {
-    databaseService.find({}, (err, finances) => {
+    databaseService.find({}, (err, k12Array) => {
         if (err) {
             return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
-        if (finances) {
-            util.generateFinanceJSON(finances, (err, result) => {
+        if (k12Array) {
+            util.generateK12JSON(k12Array, (err, result) => {
                 return res.status(200).sendData(result);
             });
         } else {
@@ -24,12 +23,12 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-    databaseService.findOneById(req.params.id, (err, finance) => {
+    databaseService.findOneById(req.params.id, (err, k12Obj) => {
         if (err) {
             return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
-        if (finance) {
-            util.generateFinanceJSON(finance, (err, result) => {
+        if (k12Obj) {
+            util.generateK12JSON(k12Obj, (err, result) => {
                 return res.status(200).sendData(result);
             });
         } else {
@@ -56,14 +55,14 @@ router.post('/:id', (req, res) => {
             }
         },
         function(data, callback) {
-            databaseService.addFinance(data, callback);
+            databaseService.addK12Object(data, callback);
         }
-    ], (err, finance) => {
+    ], (err, k12Obj) => {
         if (err) {
             return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
-        if (finance) {
-            util.generateFinanceJSON(finance, (err, result) => {
+        if (k12Obj) {
+            util.generateK12JSON(k12Obj, (err, result) => {
                 return res.status(200).sendData(result);
             });
             // We need to Emit Event Here
@@ -74,7 +73,6 @@ router.post('/:id', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
-    let validatedInput;
     async.waterfall([
         async.apply(databaseService.findOneById, req.params.id),
         function(data, callback) {
@@ -91,19 +89,15 @@ router.put('/:id', (req, res) => {
                 return callback(err);
             }
         },
-        function (data, callback) {
-            validatedInput = data;
-            databaseService.saveHistory(req.params.id, callback);
-        },
         function(data, callback) {
-            databaseService.updateFinance(req.params.id, validatedInput, callback);
+            databaseService.updateK12Object(req.params.id, data, callback);
         }
-    ], (err, finance) => {
+    ], (err, k12Obj) => {
         if (err) {
             return res.status(util.customErrorToHTTP(err.status)).sendData(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
         }
-        if (finance) {
-            util.generateFinanceJSON(finance, (err, result) => {
+        if (k12Obj) {
+            util.generateK12JSON(k12Obj, (err, result) => {
                 return res.status(200).sendData(result);
             });
             // We need to Emit Event Here
@@ -118,16 +112,13 @@ router.delete('/:id', (req, res) => {
         async.apply(databaseService.findOneById, req.params.id),
         function(data, callback) {
             if (data) {
-                databaseService.saveHistory(req.params.id, callback);
+                databaseService.deleteK12Object(req.params.id, callback);
             } else {
                 let err = new Error();
                 err.status = 404;
                 err.message = 'The request resource is not found';
                 return callback(err);
             }
-        },
-        function(data, callback) {
-            databaseService.deleteFinance(req.params.id, callback);
         }
     ], (err) => {
         if (err) {

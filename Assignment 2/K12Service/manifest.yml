@@ -1,5 +1,5 @@
 applications:
-- name: ms-finance-service
+- name: ms-k12-service
   path: .
   command: npm start
   memory: 128M

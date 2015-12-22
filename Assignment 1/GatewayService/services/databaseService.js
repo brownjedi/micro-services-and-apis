@@ -40,7 +40,7 @@ function addUrlMapping(data, callback) {
 
         temp.version = Date.now();
 
-        let urlMapping = new UrlMapping.getModel()(temp);
+        let urlMapping = new (UrlMapping.getModel())(temp);
         urlMapping.save((error, urlMappingDoc) => {
             return callback(error, urlMappingDoc);
         });

@@ -1,0 +1,42 @@
+{
+  "schemaName": "k12",
+  "collectionName": "k12",
+  "historyCollectionName": "k12history",
+  "version": "v1",
+  "schema": {
+    "studentID": {
+      "type": "String",
+      "required": true,
+      "systemLevel": true
+    },
+    "name": {
+      "type": "String",
+      "required": true
+    },
+    "address": {
+      "type": "String",
+      "required": true
+    },
+    "schoolsAttended": {
+      "type": ["String"],
+      "required": true
+    },
+    "createdAt": {
+        "type": "Date",
+        "hidden": true,
+        "required": false,
+        "systemLevel": true
+    },
+    "updatedAt": {
+        "type": "Date",
+        "hidden": true,
+        "required": false,
+        "systemLevel": true
+    },
+    "version": {
+      "type": "String",
+      "required": false,
+      "systemLevel": true
+    }
+  }
+}

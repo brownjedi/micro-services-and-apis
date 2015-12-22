@@ -2,8 +2,8 @@
 
 const path = require('path');
 const fs = require('fs');
-const schemaPath = path.join(__dirname, './../schema/financeSchema.json');
-const Finance = require('./../databaseModels/finance')(schemaPath);
+const schemaPath = path.join(__dirname, './../schema/k12Schema.json');
+const K12 = require('./../databaseModels/k12')(schemaPath);
 
 let schemaJson = require(schemaPath);
 let validFieldTypes = ['String', 'Number', 'Date', 'Boolean'];
@@ -109,7 +109,7 @@ function writeToSchemaFile(path, data, callback) {
         if (err) {
             return callback(err);
         }
-        Finance.refreshModel();
+        K12.refreshModel();
         // Doing this to remove the schema from require cache
         delete require.cache[require.resolve(path)];
         schemaJson = require(path);
@@ -118,7 +118,7 @@ function writeToSchemaFile(path, data, callback) {
 }
 
 function refreshModels() {
-    Finance.refreshModel();
+    K12.refreshModel();
 }
 
 function validateFieldType(data) {
@@ -154,7 +154,7 @@ function validateFieldType(data) {
     }
 }
 
-module.exports.Finance = Finance;
+module.exports.K12 = K12;
 
 module.exports.addField = addField;
 module.exports.updateField = updateField;

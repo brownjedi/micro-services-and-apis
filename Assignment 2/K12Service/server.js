@@ -6,14 +6,17 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const xmlparser = require('express-xml-bodyparser');
 const EasyXml = require('easyxml');
-const mongoose = require('mongoose');
-const financeRoutes = require('./routes/financeRoutes');
+const dynamoose = require('dynamoose');
+const k12Routes = require('./routes/k12Routes');
 const schemaRoutes = require('./routes/schemaRoutes');
 const util = require('./utilities/util');
 
-// Set the MongoDB connection
-mongoose.connect(process.env.mongoDBURL || require('./config/databaseUrl.json').url);
-mongoose.set('debug', true);
+// Set the DynamoDB connection
+dynamoose.AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || require('./config/credentials.json').AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || require('./config/credentials.json').AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION || require('./config/credentials.json').AWS_REGION || 'us-east-1'
+});
 
 let app = express();
 
@@ -67,7 +70,7 @@ app.use((req, res, next) => {
 });
 
 // setting all the routes and schema changes required
-app.use('/api/v1/finances', financeRoutes);
+app.use('/api/v1/k12', k12Routes);
 app.use('/spi/v1/schema', schemaRoutes);
 
 // catch 404 and forward it to error handler
@@ -85,5 +88,5 @@ app.use((err, req, res, next) => {
 
 // Start the server and listen to the port specified
 app.listen(app.get('port'), () => {
-    console.log(`Finance Express Server started on port: ${app.get('port')}`);
+    console.log(`k12 Express Server started on port: ${app.get('port')}`);
 });

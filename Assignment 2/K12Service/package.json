@@ -1,7 +1,7 @@
 {
-  "name": "finance-service",
+  "name": "k12-service",
   "version": "0.0.1",
-  "description": "A micro service which handles all the CRUD operations on the Finance Resource",
+  "description": "A micro service which handles all the CRUD operations on the K12 Resource",
   "scripts": {
     "start": "node server.js",
     "serve": "nodemon server.js",
@@ -23,10 +23,10 @@
     "async": "^1.5.0",
     "basic-auth": "^1.0.3",
     "body-parser": "^1.14.1",
+    "dynamoose": "^0.4.1",
     "easyxml": "^1.0.0",
     "express": "^4.13.3",
     "express-xml-bodyparser": "^0.2.2",
-    "mongoose": "^4.2.3",
     "morgan": "^1.6.1",
     "superagent": "^1.4.0"
   }

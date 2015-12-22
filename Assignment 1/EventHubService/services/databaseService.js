@@ -39,7 +39,7 @@ function addSubscription(data, callback) {
 
         temp.version = Date.now();
 
-        let subscription = new Subscription.getModel()(temp);
+        let subscription = new (Subscription.getModel())(temp);
         subscription.save((error, subscriptionDoc) => {
             return callback(error, subscriptionDoc);
         });

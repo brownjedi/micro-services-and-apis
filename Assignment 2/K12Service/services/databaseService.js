@@ -2,29 +2,40 @@
 
 const async = require('async');
 const schemaService = require('./schemaService');
-const Finance = schemaService.Finance;
+const K12 = schemaService.K12;
+
+function processDynamoResponse(k12Obj) {
+    delete k12Obj.lastKey;
+    if(k12Obj.constructor === Array && k12Obj.length <= 1) {
+        k12Obj = k12Obj[0];
+    }
+    return k12Obj;
+}
 
 function findOne(query, callback) {
-    Finance.getModel().findOne(query).exec((error, financeDoc) => {
-        return callback(error, financeDoc);
+    K12.getModel().query(query).exec((error, k12Obj) => {
+        k12Obj = processDynamoResponse(k12Obj);
+        return callback(error, k12Obj);
     });
 }
 
 function findOneById(id, callback) {
-    Finance.getModel().findOne({
-        financeID: id
-    }).exec((error, financeDoc) => {
-        return callback(error, financeDoc);
+    K12.getModel().query({
+        studentID: id
+    }).exec((error, k12Obj) => {
+        k12Obj = processDynamoResponse(k12Obj);
+        return callback(error, k12Obj);
     });
 }
 
 function find(query, callback) {
-    Finance.getModel().find(query).exec((error, financeDoc) => {
-        return callback(error, financeDoc);
+    K12.getModel().scan(query).exec((error, k12Obj) => {
+        delete k12Obj.lastKey;
+        return callback(error, k12Obj);
     });
 }
 
-function addFinance(data, callback) {
+function addK12Object(data, callback) {
     schemaService.getSchema((err, schemaJson) => {
         if (err) {
             return callback(err);
@@ -38,23 +49,26 @@ function addFinance(data, callback) {
         }
 
         temp.version = Date.now();
+        temp.createdAt = Date.now();
+        temp.updatedAt = Date.now();
 
-        let finance = new Finance.getModel()(temp);
-        finance.save((error, financeDoc) => {
-            return callback(error, financeDoc);
+        let k12 = new (K12.getModel())(temp);
+        k12.save((error, k12Obj) => {
+            k12Obj = processDynamoResponse(k12Obj);
+            return callback(error, k12Obj);
         });
     });
 }
 
-function deleteFinance(id, callback) {
-    Finance.getModel().remove({
-        financeID: id
-    }).exec((error) => {
+function deleteK12Object(id, callback) {
+    K12.getModel().delete({
+        studentID: id
+    }, (error) => {
         return callback(error);
     });
 }
 
-function updateFinance(id, data, callback) {
+function updateK12Object(id, data, callback) {
     async.parallel([
         schemaService.getSchema,
         async.apply(findOneById, id)
@@ -64,20 +78,22 @@ function updateFinance(id, data, callback) {
         }
 
         let schemaJson = result[0];
-        let finance = result[1];
+        let k12 = result[1];
 
-        if (finance) {
+        if (k12) {
 
             for (let key in schemaJson.schema) {
                 if (schemaJson.schema.hasOwnProperty(key)) {
-                    finance[key] = data[key];
+                    k12[key] = data[key];
                 }
             }
 
-            finance.version = Date.now();
+            k12.version = Date.now();
+            k12.updatedAt = Date.now();
 
-            finance.save((error, financeDoc) => {
-                return callback(error, financeDoc);
+            k12.save((error, k12Obj) => {
+                k12Obj = processDynamoResponse(k12Obj);
+                return callback(error, k12Obj);
             });
         } else {
             let err = new Error();
@@ -117,7 +133,7 @@ function validateInput(id, data, callback) {
 
                 let isFieldRequired = fieldSchema.required || false;
 
-                if (key === 'financeID') {
+                if (key === 'studentID') {
                     continue;
                 }
 
@@ -130,10 +146,7 @@ function validateInput(id, data, callback) {
             }
         }
 
-        temp.financeID = id;
-        delete temp.createdAt;
-        delete temp.updatedAt;
-        delete temp.version;
+        temp.studentID = id;
 
         return callback(null, temp);
     });
@@ -142,7 +155,7 @@ function validateInput(id, data, callback) {
 module.exports.findOne = findOne;
 module.exports.findOneById = findOneById;
 module.exports.find = find;
-module.exports.addFinance = addFinance;
-module.exports.updateFinance = updateFinance;
-module.exports.deleteFinance = deleteFinance;
+module.exports.addK12Object = addK12Object;
+module.exports.updateK12Object = updateK12Object;
+module.exports.deleteK12Object = deleteK12Object;
 module.exports.validateInput = validateInput;

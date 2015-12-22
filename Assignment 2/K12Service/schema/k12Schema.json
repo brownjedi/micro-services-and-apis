@@ -1,26 +1,25 @@
 {
-  "schemaName": "finance",
-  "collectionName": "finances",
-  "historyCollectionName": "financehistories",
+  "schemaName": "k12",
+  "collectionName": "k12",
+  "historyCollectionName": "k12history",
   "version": "v1",
   "schema": {
-    "financeID": {
-      "type": "Number",
-      "required": true,
-      "systemLevel": true
-    },
     "studentID": {
       "type": "String",
       "required": true,
       "systemLevel": true
     },
-    "amountDue": {
-      "type": "Number",
+    "name": {
+      "type": "String",
       "required": true
     },
-    "dueDate": {
-      "type": "Date",
-      "required": false
+    "address": {
+      "type": "String",
+      "required": true
+    },
+    "schoolsAttended": {
+      "type": ["String"],
+      "required": true
     },
     "createdAt": {
       "type": "Date",
