@@ -10,10 +10,8 @@ const mongoose = require('mongoose');
 const urlMappingRoutes = require('./routes/urlMappingRoutes');
 const schemaRoutes = require('./routes/schemaRoutes');
 const urlRoutingRoutes = require('./routes/urlRoutingRoutes');
+const queueRoutes = require('./routes/queueRoutes');
 const util = require('./utilities/util');
-const queueService = require('./services/queueService');
-
-queueService.startPolling();
 
 // Set the MongoDB connection
 mongoose.connect(process.env.mongoDBURL || require('./config/databaseUrl.json').url);
@@ -55,8 +53,7 @@ app.use((req, res, next) => {
             res.header('Content-Type', 'application/xml');
             obj = JSON.parse(JSON.stringify(obj));
             res.send(serializer.render(obj));
-        }
-        else {
+        } else {
             res.send(util.generateErrorJSON(406, 'Not acceptable'));
         }
     };
@@ -73,7 +70,8 @@ app.use((req, res, next) => {
 // setting all the routes and schema changes required
 app.use('/spi/v1/urlMappings', urlMappingRoutes);
 app.use('/spi/v1/schema', schemaRoutes);
-app.use('/api/v1/urlRouting', urlRoutingRoutes);
+app.use('/synapse', urlRoutingRoutes);
+app.use('/sqs', queueRoutes);
 
 // catch 404 and forward it to error handler
 app.use((req, res, next) => {

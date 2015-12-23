@@ -25,10 +25,7 @@ function customErrorToHTTP(errorStatus) {
         'SCHEMA_ERROR_BAD_INPUT_REQUEST': 400,
         'SCHEMA_ERROR_FORBIDDEN': 403,
         'DB_ERROR_RESOURCE_NOT_FOUND': 404,
-        'DB_ERROR_BAD_INPUT_REQUEST': 400,
-        'QUEUE_ERROR_BAD_INPUT_REQUEST': 400,
-        'QUEUE_ERROR_INTERAL_ERROR': 500
-
+        'DB_ERROR_BAD_INPUT_REQUEST': 400
     };
 
     if (!isNaN(errorStatus)) {
@@ -199,6 +196,21 @@ function auth(req, res, next) {
     }
 }
 
+function getMatchedUrls(url, urlMappings) {
+
+    let matchedUrlMappings = [];
+
+    url = util.removeAdditionalSlashes(url);
+
+    urlMappings.forEach((urlMapping) => {
+        if ((url.search(new RegExp(urlMapping.regex)) !== -1)) {
+            matchedUrlMappings.push(urlMapping);
+        }
+    });
+
+    return matchedUrlMappings;
+}
+
 module.exports.auth = auth;
 module.exports.generateErrorJSON = generateErrorJSON;
 module.exports.customErrorToHTTP = customErrorToHTTP;
@@ -207,3 +219,4 @@ module.exports.generateFieldJSON = generateFieldJSON;
 module.exports.generateUrlMappingJSON = generateUrlMappingJSON;
 module.exports.removeAdditionalSlashes = removeAdditionalSlashes;
 module.exports.generateMergedUrlRoutingResult = generateMergedUrlRoutingResult;
+module.exports.getMatchedUrls = getMatchedUrls;

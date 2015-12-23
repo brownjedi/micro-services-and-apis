@@ -5,37 +5,27 @@ const util = require('./../utilities/util');
 const request = require('superagent');
 const AWS = require('aws-sdk');
 
-let queueUrl = process.env.queueUrl || require('./../config/queueUrl.json');
+AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || require('./../config/awsCredentials.json').AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || require('./../config/awsCredentials.json').AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION || require('./../config/awsCredentials.json').AWS_REGION || 'us-east-1'
+});
+
+let queueUrl = process.env.queueUrl || require('./../config/queueUrl.json').url;
+
 let queue = Consumer.create({
     queueUrl: queueUrl,
+    batchSize: 1,
     handleMessage: handleQueueMessage,
     sqs: new AWS.SQS()
 });
 
-queue.on('error', handleQueueError);
-
+queue.on('error', (err) => {
+    console.log(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
+});
 
 function handleQueueMessage(message, done) {
 
-
-}
-
-function validateMessage(message) {
-
-    //if(message.Body) {
-    //    let data = message.Body;
-    //    if(data.method )
-    //
-    //
-    //        } else {
-    //    done();
-    //}
-
-    return false;
-}
-
-function handleQueueError(err) {
-    console.log(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
 }
 
 function startPolling() {
