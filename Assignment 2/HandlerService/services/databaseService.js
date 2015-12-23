@@ -117,7 +117,6 @@ function validateInput(id, data, callback) {
                 let fieldSchema = schemaJson.schema[key];
 
                 let isFieldRequired = fieldSchema.required || false;
-                let fieldType = fieldSchema.type;
 
                 if (key === 'urlMappingID') {
                     continue;

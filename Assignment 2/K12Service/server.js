@@ -13,9 +13,9 @@ const util = require('./utilities/util');
 
 // Set the DynamoDB connection
 dynamoose.AWS.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || require('./config/credentials.json').AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || require('./config/credentials.json').AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_REGION || require('./config/credentials.json').AWS_REGION || 'us-east-1'
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || require('./config/awsCredentials.json').AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || require('./config/awsCredentials.json').AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION || require('./config/awsCredentials.json').AWS_REGION || 'us-east-1'
 });
 
 let app = express();

@@ -11,6 +11,16 @@ const urlMappingRoutes = require('./routes/urlMappingRoutes');
 const schemaRoutes = require('./routes/schemaRoutes');
 const urlRoutingRoutes = require('./routes/urlRoutingRoutes');
 const util = require('./utilities/util');
+const AWS = require('aws-sdk');
+
+AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || require('./config/awsCredentials.json').AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || require('./config/awsCredentials.json').AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION || require('./config/awsCredentials.json').AWS_REGION || 'us-east-1'
+});
+
+const queueService = require('./services/queueService');
+queueService.startPolling();
 
 // Set the MongoDB connection
 mongoose.connect(process.env.mongoDBURL || require('./config/databaseUrl.json').url);

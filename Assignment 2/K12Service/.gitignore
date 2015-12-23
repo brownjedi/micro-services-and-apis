@@ -108,5 +108,5 @@ sftp-config.json
 
 
 node_modules/
-config/credentials.json
+config/
 npm-debug.log

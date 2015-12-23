@@ -3,11 +3,13 @@
 const Consumer = require('sqs-consumer');
 const util = require('./../utilities/util');
 const request = require('superagent');
+const AWS = require('aws-sdk');
 
 let queueUrl = process.env.queueUrl || require('./../config/queueUrl.json');
 let queue = Consumer.create({
     queueUrl: queueUrl,
-    handleMessage: handleQueueMessage
+    handleMessage: handleQueueMessage,
+    sqs: new AWS.SQS()
 });
 
 queue.on('error', handleQueueError);
@@ -40,4 +42,9 @@ function startPolling() {
     queue.start();
 }
 
+function stopPolling() {
+    queue.stop();
+}
+
 module.exports.startPolling = startPolling;
+module.exports.stopPolling = stopPolling;

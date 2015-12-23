@@ -1,7 +1,6 @@
 'use strict';
 
 const path = require('path');
-const fs = require('fs');
 const schemaPath = path.join(__dirname, './../schema/urlMappingSchema.json');
 const UrlMapping = require('./../databaseModels/urlMapping')(schemaPath);
 
