@@ -155,6 +155,23 @@ function removeAdditionalSlashes(data) {
     return temp;
 }
 
+function generateMergedQueueResult(result) {
+
+    let finalResult = {
+    };
+
+    if(result && result.length > 0) {
+
+        finalResult.queueResponses = [];
+
+        for (let i = 0; i < result.length; i++) {
+            finalResult.queueResponses.push(result[i].body);
+        }
+    }
+
+    return finalResult;
+}
+
 function generateMergedUrlRoutingResult(originalUrl, result) {
 
     let finalResult = {};
@@ -200,7 +217,7 @@ function getMatchedUrls(url, urlMappings) {
 
     let matchedUrlMappings = [];
 
-    url = util.removeAdditionalSlashes(url);
+    url = removeAdditionalSlashes(url);
 
     urlMappings.forEach((urlMapping) => {
         if ((url.search(new RegExp(urlMapping.regex)) !== -1)) {
@@ -220,3 +237,4 @@ module.exports.generateUrlMappingJSON = generateUrlMappingJSON;
 module.exports.removeAdditionalSlashes = removeAdditionalSlashes;
 module.exports.generateMergedUrlRoutingResult = generateMergedUrlRoutingResult;
 module.exports.getMatchedUrls = getMatchedUrls;
+module.exports.generateMergedQueueResult = generateMergedQueueResult;

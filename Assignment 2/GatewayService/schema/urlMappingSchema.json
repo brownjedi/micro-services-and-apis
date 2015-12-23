@@ -8,6 +8,11 @@
       "required": true,
       "systemLevel": true
     },
+    "name": {
+      "type": "String",
+      "required": true,
+      "systemLevel": true
+    },
     "regex": {
       "type": "String",
       "required": true,

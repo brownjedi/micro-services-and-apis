@@ -26,6 +26,7 @@ queue.on('error', (err) => {
 
 function handleQueueMessage(message, done) {
 
+
 }
 
 function startPolling() {

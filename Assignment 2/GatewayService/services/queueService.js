@@ -29,7 +29,7 @@ function validateInput(message, callback) {
             return callback(err);
         }
 
-        if(!message.outputQueueURL) {
+        if(!message.outputQueueUrl) {
             let err = new Error();
             err.status = 'QUEUE_ERROR_BAD_INPUT_REQUEST';
             err.message = "Bad Request. The 'outputQueueUrl' is a required field";
