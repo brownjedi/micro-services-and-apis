@@ -44,29 +44,30 @@ function handleQueueMessage(message, done) {
     internalRequest.end((error, response) => {
 
         if (error) {
-            console.log(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
-        } else {
-            let output = {};
-            output.MessageId = message.MessageId;
-            output.body = response.body;
+            console.log(util.generateErrorJSON(util.customErrorToHTTP(error.status), error.message));
+        }
+        let output = {};
+        output.MessageId = message.MessageId;
 
+        if (response && response.body) {
+            output.body = response.body;
             if (output.body.link) {
                 output.body.link.href = data.url;
             }
-
-            var messageJSON = JSON.stringify(output);
-            var params = {
-                MessageBody: messageJSON,
-                QueueUrl: data.outputQueueUrl,
-                DelaySeconds: 0
-            };
-
-            sqsClient.sendMessage(params, (err, result) => {
-                if(err) {
-                    console.log(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
-                }
-            });
         }
+
+        var messageJSON = JSON.stringify(output);
+        var params = {
+            MessageBody: messageJSON,
+            QueueUrl: data.outputQueueUrl,
+            DelaySeconds: 0
+        };
+
+        sqsClient.sendMessage(params, (err, result) => {
+            if (err) {
+                console.log(util.generateErrorJSON(util.customErrorToHTTP(err.status), err.message));
+            }
+        });
 
         return done();
     });
